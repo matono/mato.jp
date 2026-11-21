@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<!-- Copyright 2026 Akiyoshi Matono
+<!-- Copyright 2026 Akiyoshi Matono (akiyoshi@mato.jp)
      Original content: SPDX-License-Identifier: Apache-2.0
      Third-party material has its own license; see ?license. -->
 <link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">
@@ -14,7 +14,7 @@
 :root{color-scheme:light;--prime-color:#155c86;--fg:#26333d;--muted:#64717b;--line:#d7dfe4;--soft:#f3f5f6;font:14px/1.48 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:#f1f4f6;color:var(--fg)}
-main{max-width:1280px;min-height:100vh;margin:0 auto;padding:0 18px 112px;background:#fff;border-inline:1px solid #e4e9ed}
+main{max-width:1280px;min-height:100vh;margin:0 auto;padding:0 18px 25px;background:#fff;border-inline:1px solid #e4e9ed}
 h1,h2,h3,p{margin:0}a{color:var(--prime-color)}
 .topbar{min-height:55px;padding:10px 0 7px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .title-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px 12px;flex:1;min-width:0}
@@ -63,7 +63,6 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .concept-text{min-width:0}
 .concept-text p+p{margin-top:7px}
 .concept-panel h3{font-size:13px;margin:0 0 4px}
-.build-stamp{font-size:11px;color:var(--muted);white-space:nowrap;font-weight:500}
 .state-automaton{display:block;width:100%;max-width:380px;height:auto;max-height:118px}
 .concept-explain{color:var(--muted);font-size:12px;line-height:1.6;margin-top:0}
 .concept-note{font-size:11px;color:var(--muted)}
@@ -205,14 +204,16 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .dfs-dot{display:inline-block;width:10px;height:10px;border:1px solid #8fa6b7;border-radius:50%;background:#fff}
 .dfs-dot.visited{background:#e6eff5}
 .dfs-dot.current{background:var(--prime-color);border-color:var(--prime-color)}
-.learning-footer{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:12;width:min(100%,1280px);padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid #cbd5dc;border-inline:1px solid #e4e9ed;background:#f4f6f7;box-shadow:0 -3px 8px #3147580b;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.learning-footer{position:sticky;bottom:0;z-index:9;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:8px 9px;background:#f4f6f7;border-top:1px solid #cbd5dc;box-shadow:0 -3px 8px #3147580b}
 .footer-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .footer-copy .action-text{font-size:13px;font-weight:750;color:var(--fg)}
 .footer-copy .lesson-text{font-size:13px;font-weight:750;line-height:1.5;color:var(--prime-color)}
+.footer-note{border-top:1px solid var(--line);padding-top:8px;margin-top:18px;color:var(--muted)}
+.footer-note .copyright-line{display:block;font-size:10px;line-height:1.5}
 @media(max-width:920px){.workspace{grid-template-columns:1fr;gap:12px}.operations{border:0;border-top:1px solid var(--line);padding:13px 0 0}.operations:not(.dfs-operations){display:grid;grid-template-columns:1fr 1.2fr;gap:16px}.operations>.section-heading{grid-column:1/-1}.operation-section{border:0;padding:0;margin:0}.dfs-operations{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}.dfs-operations>.section-heading{grid-column:1/-1}.dfs-operations>.step-status{grid-column:1/-1}}
-@media(max-width:860px){main{padding:0 12px 112px}.learning-footer{padding-left:12px;padding-right:12px}}
+@media(max-width:860px){main{padding:0 12px 18px}}
 @media(max-width:590px){.operations:not(.dfs-operations),.dfs-operations{display:block}.operation-section{border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:13px}.topbar{flex-wrap:wrap}.home-link{margin-left:auto}.topbar h1{font-size:19px}.page-head h2{font-size:18px}.stage{font-size:11px;min-height:40px;padding:4px 2px}button,select{min-height:43px;font-size:15px}}
-@media(max-width:540px){main{padding:0 8px 130px}.learning-footer{padding-left:8px;padding-right:8px}.footer-copy .action-text,.footer-copy .lesson-text{font-size:12px}}
+@media(max-width:540px){main{padding:0 8px 15px}.footer-copy .action-text,.footer-copy .lesson-text{font-size:12px}}
 
 /* Integrated Playground uses the same two-pane layout, code gutters and graph zoom. */
 .playground4 .run-workspace{grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr)}
@@ -231,8 +232,6 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .playground4 .p4-state{padding:7px 9px;border-left:3px solid var(--prime-color);background:var(--soft);margin:8px 0;font-size:12px}
 .playground4 .p4-buttons button{flex:1 1 auto}
 .playground4 .p4-muted-label{font-size:12px;color:var(--muted)}
-.playground4 .p4-editor-buttons{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}
-.playground4 .p4-editor-buttons button{flex:1 1 auto}
 .playground4 input[type="text"]{font:inherit;min-height:35px;padding:5px 9px;border:1px solid var(--line);border-radius:5px;min-width:0;width:100%;color:var(--fg);background:#fff}
 .playground4 input[type="text"]:disabled{background:var(--soft);color:var(--muted)}
 .playground4 #p4-definition-note{margin:5px 0 10px}
@@ -242,7 +241,6 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .graph-presets input:disabled{background:var(--soft);color:var(--muted)}
 .graph-presets .form-row{display:flex;gap:5px;align-items:end;flex-wrap:wrap}
 @media(max-width:850px){.graph-presets select,.graph-presets input,.graph-presets button{min-height:44px}}
-.playground4 #p4-file-input{display:none}
 @media(max-width:1200px){.playground4 .p4-code-gutter,.playground4 textarea{font-size:16px;line-height:24px}}
 @media(max-width:920px){.playground4 .run-workspace{grid-template-columns:1fr}.playground4 .run-workspace .operations{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:12px}}
 .graph-preset-label{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
@@ -274,7 +272,9 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .graph-vertex .node-initial-value{font-size:11px;font-weight:650}
 @media(max-width:590px){.vertex-values{grid-template-columns:repeat(2,minmax(0,1fr))}.execution-first-no-start{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .initial-value-mismatch{color:#995800;font-weight:650}
-.analysis-panel{margin-top:8px}
+.analysis-panel{margin-top:12px}
+.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+@media(max-width:680px){.analysis-grid{grid-template-columns:minmax(0,1fr)}}
 .analysis-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums}
 .analysis-table caption{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .analysis-table th,.analysis-table td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -284,6 +284,13 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .analysis-table td.analysis-na{color:var(--muted);font-weight:400}
 .analysis-table tr.analysis-key td{color:var(--prime-color);font-weight:800}
 .analysis-method{margin:5px 0 0;font-size:11px;color:var(--muted);line-height:1.4}
+.pregel-model-details{margin-top:12px}
+.pregel-api-table{width:100%;margin-top:10px;border-collapse:collapse;font-size:12px;line-height:1.45}
+.pregel-api-table caption{text-align:left;font-size:12px;font-weight:700;margin-bottom:5px}
+.pregel-api-table th,.pregel-api-table td{border-bottom:1px solid var(--line);text-align:left;padding:5px 6px;vertical-align:top}
+.pregel-api-table thead th{background:var(--soft)}
+.pregel-api-table tbody th{width:50%;font-weight:500;overflow-wrap:anywhere}
+.pregel-api-table code{font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -297,7 +304,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 </head>
 <body>
 <main>
-<header class="topbar"><div class="title-line"><h1>グラフ処理</h1><span class="build-stamp" title="GitHub作業ブランチの版">v0.31.3</span><span class="subtitle">グラフの基礎から並列・分散グラフ処理へ</span></div><a class="home-link" href="./index.html">教材一覧に戻る</a></header>
+<header class="topbar"><div class="title-line"><h1>グラフ処理</h1><span class="subtitle">グラフの基礎から並列・分散グラフ処理へ</span></div><a class="home-link" href="./index.html">教材一覧に戻る</a></header>
 <nav class="stage-nav" aria-label="学習の進め方">
  <div class="nav-group active" data-stage="graph"><span class="nav-group-title">グラフ</span><div class="nav-group-buttons">
   <button id="tab1" class="stage" type="button" aria-current="step">① グラフ作成</button>
@@ -348,7 +355,6 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="operation-section initial-values-section">
 <h3>頂点の初期value</h3>
 <div class="form-row"><div class="field"><label for="initial-values-preset">一括設定</label><select id="initial-values-preset"><option value="sssp">SSSP（頂点1を0、残り∞）</option><option value="zero">すべて0</option><option value="infinity">すべて∞</option><option value="id">CC（頂点ID）</option><option value="rank">PageRank（1 / 頂点数）</option><option value="custom">すべて右の値</option></select></div><input type="text" id="initial-values-custom" aria-label="全頂点に設定する値" placeholder="数値または∞" hidden><button type="button" id="initial-values-apply">適用</button></div>
-<p class="compute-note">SSSP：1頂点のみ0、残り∞。CC：各頂点のID。PageRank：全頂点を1 / 頂点数に設定します。</p>
 <div id="vertex-values" class="vertex-values" aria-label="頂点ごとの初期value"></div>
 <p id="initial-values-status" class="hint" role="status"></p>
 </div>
@@ -359,7 +365,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="field"><label for="edge-from">左の頂点</label><select id="edge-from"></select></div>
 <div class="field"><label for="edge-to">右の頂点</label><select id="edge-to"></select></div>
 <div class="field"><label for="edge-direction">方向</label><select id="edge-direction"><option value="right">→</option><option value="left">←</option><option value="both">↔</option></select></div>
-<button id="add-edge" class="primary" type="button">辺を追加</button></div>
+<button id="add-edge" class="primary" type="button">辺を追加</button><button id="add-random-edge" type="button">ランダムに1辺追加</button></div>
 <div id="edge-message" class="feedback" role="status" aria-live="polite"></div>
 </div></section></div>
 </section>
@@ -383,6 +389,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="run-key" aria-label="Cardの状態"><span><i class="key-square"></i>未到達（∞）</span><span><i class="key-square path"></i>経路中</span><span><i class="key-square current"></i>現頂点（初／再／復）</span><span><i class="key-square done"></i>距離判明（更新あり）</span></div>
 <div class="run-key" aria-label="辺の状態"><span><i class="edge-swatch"></i>未確認</span><span><i class="edge-swatch active"></i>現在のパス</span><span><i class="edge-swatch seen"></i>確認済み</span></div>
 <p id="dfs-graph-guide" class="graph-guide">探索者は1人です。濃い青は現在たどっている道、薄い青は確認済みの辺です。一度調べた頂点でも、より短い経路が見つかった場合は距離を更新して再探索します。</p>
+<div id="dfs-analysis" class="analysis-panel" aria-label="DFS実行の分析"></div>
 </section>
 <section class="operations dfs-operations" aria-labelledby="dfs-title">
 <div class="section-heading"><h3 id="dfs-title">逐次実行モデルの操作</h3><span id="step-label" class="muted"></span></div>
@@ -423,7 +430,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 </details>
 </div>
 <div class="run-note" id="dfs-status" role="status" aria-live="polite"></div>
-<div id="dfs-analysis" class="analysis-panel"></div>
+
 </section></div>
 </section>
 <section id="page3" aria-labelledby="title3" hidden>
@@ -517,6 +524,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <g id="edge-layer3"></g><g id="vertex-layer3"></g><g id="token-layer3"></g></svg></div>
 <div class="run-key" aria-label="Pregelの頂点状態"><span><i class="active-dot"></i>Active（活性）</span><span><i class="halted-dot"></i>Halted（停止）</span><span>太枠：現在のコード行を実行した頂点</span></div>
 <p class="graph-guide">各頂点のinputs（受信した距離候補）、value（保存した最短距離候補）、output（送信予約）を確認しましょう。「次の行」で1行ずつ進み、「次のSS」でSuperstepを進めます。</p>
+<div id="pregel-analysis" class="analysis-panel" aria-label="Pregel実行の分析"></div>
 </section>
 <section class="operations run-operations" aria-labelledby="pregel-title">
 <div class="section-heading"><h3 id="pregel-title">Pregelの操作</h3><span id="pregel-step" class="muted"></span></div>
@@ -541,7 +549,58 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <p class="compute-note">現在の<code>value</code>と受信した値（inputs）の最小値（<code>next</code>）を比較し、距離が短くなった場合は、valueを更新して隣接頂点にメッセージを送ります。また、SS0では開始頂点から隣接頂点に距離候補1を送ります。</p>
 </div>
 <div id="pregel-status" class="run-note" role="status" aria-live="polite"></div>
-<div id="pregel-analysis" class="analysis-panel"></div>
+<details class="dfs-model-details pregel-model-details">
+<summary>Pregel実行モデルのコードを見る</summary>
+<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は単一Workerで頂点を順に処理する教材用シミュレータです。</p>
+<pre class="dfs-model-source"><code>let inbox = emptyInbox();
+
+for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
+  const outbox = [];
+
+  for (const vertex of vertices) {
+    const inputs = inbox[vertex.id];
+    if (!vertex.active &amp;&amp; inputs.length === 0) continue;
+    vertex.active = true;
+
+    const api = {
+      superstep: ss,
+      id: vertex.id,
+      vertexCount: vertices.length,
+      outDegree: vertex.outNeighbors.length,
+      params,
+      outNeighbors() { return [...vertex.outNeighbors]; },
+      setValue(v) { vertex.value = v; },
+      send(to, v) { outbox.push({ from: vertex.id, to, value: v }); },
+      sendToNeighbors(v) {
+        for (const to of vertex.outNeighbors) this.send(to, v);
+      },
+      voteToHalt() { vertex.active = false; }
+    };
+
+    compute(inputs, vertex.value, api);
+  }
+
+  if (vertices.every(v =&gt; !v.active) &amp;&amp; outbox.length === 0)
+    break;
+  inbox = deliver(outbox);
+}</code></pre>
+<p class="compute-note"><code>emptyInbox</code>・<code>deliver</code>などは説明用の処理です。頂点への配送と終了判定は実行モデルが担当します。</p>
+<table class="pregel-api-table"><caption>Computeから利用できるAPI</caption>
+<thead><tr><th scope="col">API</th><th scope="col">役割</th></tr></thead>
+<tbody>
+<tr><th scope="row"><code>api.setValue(v)</code></th><td>頂点の値を更新</td></tr>
+<tr><th scope="row"><code>api.send(to, v)</code></th><td>指定頂点へメッセージを送信予約</td></tr>
+<tr><th scope="row"><code>api.sendToNeighbors(v)</code></th><td>すべての出辺の接続先へ送信予約</td></tr>
+<tr><th scope="row"><code>api.voteToHalt()</code></th><td>現在の頂点を停止</td></tr>
+<tr><th scope="row"><code>api.outNeighbors()</code></th><td>出辺の接続先一覧を取得</td></tr>
+<tr><th scope="row"><code>api.superstep</code></th><td>現在のSuperstep番号</td></tr>
+<tr><th scope="row"><code>api.id</code></th><td>現在の頂点ID</td></tr>
+<tr><th scope="row"><code>api.outDegree</code></th><td>出次数</td></tr>
+<tr><th scope="row"><code>api.vertexCount</code></th><td>全頂点数</td></tr>
+<tr><th scope="row"><code>api.params</code></th><td>Computeのパラメータ</td></tr>
+</tbody></table>
+</details>
+
 </section></div>
 </section>
 
@@ -569,6 +628,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
    </div>
    <div class="run-key"><span><i class="active-dot"></i>Active</span><span><i class="halted-dot"></i>Halted</span><span>太枠：この文の実行頂点</span><span>青い円：メッセージ</span></div>
    <p class="graph-guide">頂点には inputs / value / output / current / next を表示します。</p>
+   <div id="p4-analysis" class="analysis-panel" aria-label="Playground実行の分析"></div>
   </section>
   <section class="operations run-operations" aria-labelledby="p4-title">
    <div class="section-heading"><h3 id="p4-title">Playgroundの操作</h3><span id="p4-position" class="muted">未実行</span></div>
@@ -607,20 +667,70 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
      <div class="code-line"><span class="num" id="p4-editor-tail-num" aria-hidden="true">5</span><code>}</code></div>
     </div>
     <div id="p4-trace" class="compute-box code-read p4-trace" hidden aria-label="実行コードと行番号"></div>
-    <p class="compute-note">頂点の初期valueは①で設定した値を使います。</p>
-    <p class="compute-note">④とは異なり、この画面はコードを書き換えられます。利用できる構文は元のPlaygroundと同じ範囲です。行単位の同期は学習用で、実際のPregelの同期はSuperstep境界です。</p>
+    <p class="compute-note">行単位の同期は学習用で、実際のPregelの同期はSuperstep境界です。</p>
    </div>
    <p id="p4-status" class="run-note" role="status" aria-live="polite">サンプルを選んで「コードを確定」を押してください。</p>
-   <div id="p4-analysis" class="analysis-panel"></div>
-   <p class="p4-state" id="p4-storage-status" role="status">名前付きユーザ定義をブラウザに保存します。保存できない場合はJSONでバックアップできます。</p>
-   <div class="p4-editor-buttons"><button type="button" id="p4-export">設定をJSONで書き出す</button><button type="button" id="p4-import">JSONを読み込む</button><input id="p4-file-input" type="file" accept=".json,application/json"></div>
+
+   <p class="p4-state" id="p4-storage-status" role="status">名前付きユーザComputeとグラフを、このブラウザに自動保存します。</p>
+<details class="dfs-model-details pregel-model-details">
+<summary>Pregel実行モデルのコードを見る</summary>
+<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は単一Workerで頂点を順に処理する教材用シミュレータです。</p>
+<pre class="dfs-model-source"><code>let inbox = emptyInbox();
+
+for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
+  const outbox = [];
+
+  for (const vertex of vertices) {
+    const inputs = inbox[vertex.id];
+    if (!vertex.active &amp;&amp; inputs.length === 0) continue;
+    vertex.active = true;
+
+    const api = {
+      superstep: ss,
+      id: vertex.id,
+      vertexCount: vertices.length,
+      outDegree: vertex.outNeighbors.length,
+      params,
+      outNeighbors() { return [...vertex.outNeighbors]; },
+      setValue(v) { vertex.value = v; },
+      send(to, v) { outbox.push({ from: vertex.id, to, value: v }); },
+      sendToNeighbors(v) {
+        for (const to of vertex.outNeighbors) this.send(to, v);
+      },
+      voteToHalt() { vertex.active = false; }
+    };
+
+    compute(inputs, vertex.value, api);
+  }
+
+  if (vertices.every(v =&gt; !v.active) &amp;&amp; outbox.length === 0)
+    break;
+  inbox = deliver(outbox);
+}</code></pre>
+<p class="compute-note"><code>emptyInbox</code>・<code>deliver</code>などは説明用の処理です。頂点への配送と終了判定は実行モデルが担当します。</p>
+<table class="pregel-api-table"><caption>Computeから利用できるAPI</caption>
+<thead><tr><th scope="col">API</th><th scope="col">役割</th></tr></thead>
+<tbody>
+<tr><th scope="row"><code>api.setValue(v)</code></th><td>頂点の値を更新</td></tr>
+<tr><th scope="row"><code>api.send(to, v)</code></th><td>指定頂点へメッセージを送信予約</td></tr>
+<tr><th scope="row"><code>api.sendToNeighbors(v)</code></th><td>すべての出辺の接続先へ送信予約</td></tr>
+<tr><th scope="row"><code>api.voteToHalt()</code></th><td>現在の頂点を停止</td></tr>
+<tr><th scope="row"><code>api.outNeighbors()</code></th><td>出辺の接続先一覧を取得</td></tr>
+<tr><th scope="row"><code>api.superstep</code></th><td>現在のSuperstep番号</td></tr>
+<tr><th scope="row"><code>api.id</code></th><td>現在の頂点ID</td></tr>
+<tr><th scope="row"><code>api.outDegree</code></th><td>出次数</td></tr>
+<tr><th scope="row"><code>api.vertexCount</code></th><td>全頂点数</td></tr>
+<tr><th scope="row"><code>api.params</code></th><td>Computeのパラメータ</td></tr>
+</tbody></table>
+</details>
   </section>
  </div>
 </section>
-<div class="learning-footer" aria-label="学習のまとめと次への操作">
+<footer id="learning-footer" class="learning-footer" aria-label="学習のまとめと次への操作">
 <div class="footer-copy"><span id="footer-action" class="action-text"></span><span id="footer-lesson" class="lesson-text"></span></div>
 <button type="button" id="footer-next" class="primary">② 最短経路へ</button>
-</div>
+</footer>
+<footer class="footer-note"><small class="copyright-line">© 2026 Akiyoshi Matono (akiyoshi@mato.jp)</small></footer>
 </main>
 <script id="playground4-worker-source" type="text/plain">
 "use strict";
@@ -821,6 +931,27 @@ function setDirection(g,a,b,dir){
  if(dir==="left"||dir==="both")g.edges.push([b,a]);
  g.edges.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
  return true;
+}
+// Pick uniformly from absent edges. In directed mode, a missing reverse edge
+// is independent of the existing forward edge. Undirected edges count as pairs.
+function randomEdgeCandidates(g,mode){
+ const seen=new Set(g.edges.map(([a,b])=>a+":"+b)),options=[];
+ for(const a of g.vertices)for(const b of g.vertices){
+  if(a===b||seen.has(a+":"+b))continue;
+  if(mode==="undirected"&&(a>b||seen.has(b+":"+a)))continue;
+  options.push([a,b]);
+ }
+ return options;
+}
+function addRandomEdge(g,mode,random=Math.random){
+ const options=randomEdgeCandidates(g,mode);
+ if(!options.length)return null;
+ const index=Math.min(options.length-1,Math.max(0,Math.floor(random()*options.length)));
+ const [a,b]=options[index];
+ g.edges.push([a,b]);
+ if(mode==="undirected")g.edges.push([b,a]);
+ g.edges.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
+ return[a,b];
 }
 function resize(g,n){
  if(!Number.isInteger(n)||n<2||n>12)throw Error("頂点数は2〜12です");
@@ -1438,9 +1569,10 @@ function listAnalysisVertices(ids){return ids&&ids.length?ids.join("、"):ANALYS
 function renderAnalysis(target,values){
  const holder=$(target);
  if(!holder.firstChild){
-  const table=document.createElement("table");table.className="analysis-table";
-  const caption=document.createElement("caption");caption.textContent="実行状況と累積統計";table.appendChild(caption);
+  const grid=document.createElement("div");grid.className="analysis-grid";
   for(const group of ANALYSIS_GROUPS){
+   const table=document.createElement("table");table.className="analysis-table";
+   const caption=document.createElement("caption");caption.textContent=group.label+"の表";table.appendChild(caption);
    const body=document.createElement("tbody"),heading=document.createElement("tr"),head=document.createElement("th");
    heading.className="analysis-heading";head.colSpan=2;head.scope="rowgroup";head.textContent=group.label;heading.appendChild(head);body.appendChild(heading);
    for(const [key,label] of group.rows){
@@ -1448,11 +1580,11 @@ function renderAnalysis(target,values){
     if(key==="steps")row.className="analysis-key";
     name.scope="row";name.textContent=label;cell.setAttribute("data-analysis-key",key);row.append(name,cell);body.appendChild(row);
    }
-   table.appendChild(body);
+   table.appendChild(body);grid.appendChild(table);
   }
   const note=document.createElement("p");note.className="analysis-method";
   note.textContent="実行ステップ数：②は完了したCompute数、④・⑤は完了したSuperstep数。④・⑤のCompute実行回数はSuperstep完了時に集計します。";
-  holder.append(table,note);
+  holder.append(grid,note);
  }
  for(const cell of holder.querySelectorAll("[data-analysis-key]")){
   const value=showAnalysisNumber(values[cell.dataset.analysisKey]);
@@ -1763,6 +1895,7 @@ function refreshGraphSelectors(){
  $("graph-name1").value=d?d.name:"";
  $("graph-delete1").disabled=!d;
  $("graph-copy1").disabled=graphLibrary.users.length>=MAX_USER_GRAPHS;
+ $("add-random-edge").disabled=randomEdgeCandidates(graph,graphMode).length===0;
  $("graph-mode1").value=graphMode;
  graphNameEditor.reset();
 }
@@ -1902,7 +2035,7 @@ function saveWorkspace(){
  try{stateStorage.setItem(STORAGE_KEY,JSON.stringify(captureWorkspace()));}
  catch(e){
   stage4.storageAvailable=false;
-  if($("p4-storage-status"))$("p4-storage-status").textContent="ブラウザに保存できません。JSON書き出しをご利用ください。";
+  if($("p4-storage-status"))$("p4-storage-status").textContent="この環境では自動保存できません。変更内容は再アクセス時に復元されません。";
  }
 }
 function ensureStage4Graph(g,mode){
@@ -1968,7 +2101,7 @@ function refreshDefinitionSelector4(){
   "組み込みCompute「"+stage4.selectedDefinitionId+"」を表示中。コードを編集すると独立したユーザComputeを作ります。初期valueを含むグラフは①で管理します。";
 }
 function createUserDefinition4(){
- if(stage4.userDefinitions.length>=MAX_USER_DEFINITIONS)throw Error("ユーザ定義は最大"+MAX_USER_DEFINITIONS+"件です。不要な定義を削除するかJSONを書き出してください");
+ if(stage4.userDefinitions.length>=MAX_USER_DEFINITIONS)throw Error("ユーザ定義は最大"+MAX_USER_DEFINITIONS+"件です。不要な定義を削除してください");
  const def={id:nextDefinitionId4(),name:defaultDefinitionName4(),baseScenario:stage4.baseScenario,
   code:stage4.code,initializer:stage4.initializer,params:{...stage4.params}};
  stage4.userDefinitions.push(def);stage4.selectedDefinitionId="user:"+def.id;
@@ -2376,33 +2509,16 @@ function initializeStage4(saved){
  }
  refreshDefinitionSelector4();refreshGraphSelectors();
  $("p4-storage-status").textContent=stage4.storageAvailable?
-  "Compute "+stage4.userDefinitions.length+" 件・グラフ "+graphLibrary.users.length+" 件を自動保存。端末間の移行はJSONを使用してください。":
-  "この環境では自動保存できません。再アクセス時の復元にはJSONをご利用ください。";
-}
-function exportStage4(){
- const json=JSON.stringify(captureWorkspace(),null,2);
- const url=URL.createObjectURL(new Blob([json],{type:"application/json"}));
- const a=document.createElement("a");a.href=url;a.download="takezono-graph-playground.json";
- document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),3000);
-}
-async function importStage4File(file){
- if(!file||file.size>2000000)throw Error("JSONファイルは2MB以下にしてください");
- const data=JSON.parse(await file.text());
- validateWorkspace4(data);
- if((stage4.userDefinitions.length||graphLibrary.users.length)&&typeof window.confirm==="function"&&
-  !window.confirm("現在のユーザComputeとユーザグラフをJSONの内容で置き換えます。続けますか？"))return;
- pause();stopStage4();
- graph=clone(data.main.graph);
- initializeStage4(data);
- graphChanged();renderStage4();saveWorkspace();
- $("p4-status").textContent="JSONからComputeと共有グラフを復元しました。実行して結果を確認してください。";
+  "Compute "+stage4.userDefinitions.length+" 件・グラフ "+graphLibrary.users.length+" 件をこのブラウザに自動保存します。":
+  "この環境では自動保存できません。変更内容は再アクセス時に復元されません。";
 }
 function zoomVisiblePage(){const stage=page<=2?page:page===4?3:page===5?4:null;if(stage!==null)updateGraphZoom(stage);}
 function setPage(n){
  if(![1,2,3,4,5].includes(n))return;
  if(page===5&&n!==5)stopStage4();
  pause();page=n;
+ // As on ai.html, the learning footer belongs to the active page and sticks within it.
+ $("page"+n).appendChild($("learning-footer"));
  for(const id of [1,2,3,4,5]){$("page"+id).hidden=id!==n;if(id===n)$("tab"+id).setAttribute("aria-current","step");else $("tab"+id).removeAttribute("aria-current");}
  const group=n===1?"graph":n===2?"sequential":"parallel";
  document.querySelectorAll(".stage-nav .nav-group").forEach(el=>el.classList.toggle("active",el.dataset.stage===group));
@@ -2443,6 +2559,18 @@ $("add-edge").addEventListener("click",function(){
  if(!prepareGraphEdit4())return;
  if(!setDirection(graph,a,b,graphMode==="undirected"?"both":d)){$("edge-message").textContent="辺を追加できません。";return;}
  graphChanged();$("edge-message").textContent="辺を追加しました。";
+});
+$("add-random-edge").addEventListener("click",()=>{
+ if(!randomEdgeCandidates(graph,graphMode).length){
+  $("edge-message").textContent="追加できる辺がありません。";$("add-random-edge").disabled=true;return;
+ }
+ if(!prepareGraphEdit4())return;
+ const edge=addRandomEdge(graph,graphMode);
+ if(!edge){$("edge-message").textContent="追加できる辺がありません。";return;}
+ graphChanged();
+ $("edge-message").textContent=graphMode==="undirected"?
+  "頂点"+edge[0]+"と"+edge[1]+"の無向辺を追加しました。":
+  "頂点"+edge[0]+"→"+edge[1]+"の有向辺を追加しました。";
 });
 // The sole graph editor is on ①. The selected graph is shared by all pages.
 $("graph-preset1").addEventListener("change",function(){
@@ -2507,13 +2635,6 @@ $("p4-next").addEventListener("click",()=>{stopStage4();jumpStage4(stage4.positi
 $("p4-prev-ss").addEventListener("click",()=>{stopStage4();previousStage4SS();});
 $("p4-next-ss").addEventListener("click",()=>{stopStage4();nextStage4SS();});
 $("p4-play").addEventListener("click",startStage4Auto);
-$("p4-export").addEventListener("click",exportStage4);
-$("p4-import").addEventListener("click",()=>$("p4-file-input").click());
-$("p4-file-input").addEventListener("change",async function(){
- try{await importStage4File(this.files?.[0]);}
- catch(e){$("p4-status").textContent="JSONの読み込みに失敗しました："+e.message;}
- finally{this.value="";}
-});
 const saved=readWorkspace();
 if(saved&&[1,2,3,4].includes(saved.schema)&&saved.main){
  try{
@@ -2536,7 +2657,7 @@ graphChanged();setPage(1);
  section.className="license-page";
  section.setAttribute("aria-label","著作権とライセンス");
  section.innerHTML=`<h1>著作権とライセンス</h1>
- <p>Copyright &copy; 2026 Akiyoshi Matono</p>
+ <p>Copyright &copy; 2026 Akiyoshi Matono (akiyoshi@mato.jp)</p>
  <h2>教材本体</h2>
  <p>独自に制作した教材のHTML・CSS・JavaScript等は、<strong>Apache License, Version 2.0 (Apache-2.0)</strong> で提供します。</p>
  <p><a href="./LICENSE">Apache License 2.0 の全文（同梱ファイル）</a> / <a href="https://www.apache.org/licenses/LICENSE-2.0">公式ライセンス文書</a></p>

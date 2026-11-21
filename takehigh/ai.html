@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<!-- Copyright 2026 Akiyoshi Matono
+<!-- Copyright 2026 Akiyoshi Matono (akiyoshi@mato.jp)
      Original content: SPDX-License-Identifier: Apache-2.0
      Third-party material has its own license; see ?license. -->
 <link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">
@@ -140,7 +140,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .callout.error{background:#f3f5f6;border-left-color:var(--warn);color:#6b7882}
 .callout.warning{background:#f3f5f6;border-left-color:#9aa6ae}
 #train-chart-panel h3{margin:0}
-.footer-note{border-top:1px solid var(--line);padding-top:8px;margin-top:18px;color:var(--muted);font-size:11px}
+.footer-note{border-top:1px solid var(--line);padding-top:8px;margin-top:18px;color:var(--muted)}
+.footer-note .copyright-line{display:block;font-size:10px;line-height:1.5}
 @media(max-width:860px){main{padding:0 12px 18px}.feature-options{grid-template-columns:repeat(3,minmax(0,1fr))}#point-1 .inspector-grid,.split-grid{grid-template-columns:1fr;gap:12px}.mail-list{max-height:245px}#split-detail{min-height:0;max-height:210px;padding-left:0;border-left:0;border-top:1px solid var(--line)}.topbar .meta{display:none}}
 @media(max-width:540px){main{padding:0 8px 15px}h1{font-size:17px}.topbar .subtitle{display:none}.stage-nav button{font-size:11px;min-height:40px}.feature-options{grid-template-columns:repeat(2,minmax(0,1fr))}.page-head{display:block}.direction-head,.direction-row{gap:4px;grid-template-columns:1fr 1fr 1.3fr}.sticky-actions .small{font-size:11px}}
 
@@ -412,7 +413,7 @@ main{max-width:1280px;padding:0 18px 26px}
  <details class="section"><summary>発展：200通をすべて線形分離できる？</summary><div class="row" style="padding:6px 0"><button id="check-separability">この組合せを判定</button><span class="small muted">学習正答率とは別の判定</span></div><div id="challenge-result" role="status" aria-live="polite"></div></details>
  <div class="sticky-actions"><div class="sticky-copy small"><strong class="action-text">学習用とテスト用の正答率の変化を比較する。</strong><strong class="lesson-text">学習用で正答率が高くても、テスト用で高いとは限らない。両方で高い正答率を達成できたかな？</strong></div><button id="retry-features" class="primary">最初に戻る</button></div>
 </section>
-<footer class="footer-note">この200通は教材用の架空メールです。予測結果は実際の安全性を保証しません。単層パーセプトロン／ローカル実行。</footer>
+<footer class="footer-note"><small class="copyright-line">© 2026 Akiyoshi Matono (akiyoshi@mato.jp)</small></footer>
 </main>
 
 <script>
@@ -1138,7 +1139,7 @@ boot();
  section.className="license-page";
  section.setAttribute("aria-label","著作権とライセンス");
  section.innerHTML=`<h1>著作権とライセンス</h1>
- <p>Copyright &copy; 2026 Akiyoshi Matono</p>
+ <p>Copyright &copy; 2026 Akiyoshi Matono (akiyoshi@mato.jp)</p>
  <h2>教材本体</h2>
  <p>独自に制作した教材のHTML・CSS・JavaScript等は、<strong>Apache License, Version 2.0 (Apache-2.0)</strong> で提供します。</p>
  <p><a href="./LICENSE">Apache License 2.0 の全文（同梱ファイル）</a> / <a href="https://www.apache.org/licenses/LICENSE-2.0">公式ライセンス文書</a></p>
