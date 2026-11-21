@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- Copyright 2026 Akiyoshi Matono (akiyoshi@mato.jp)
+     Original content: SPDX-License-Identifier: Apache-2.0
+     Third-party material has its own license; see ?license. -->
+<link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f1f4f6">
+<title>竹園高校セミナー 2026｜体験教材</title>
+<style>
+:root{color-scheme:light;--prime-color:#155c86;--fg:#26333d;--muted:#64717b;--line:#d7dfe4;font:14px/1.48 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#f1f4f6;color:var(--fg)}
+main{max-width:1280px;min-height:100vh;margin:0 auto;padding:0 18px 26px;background:#fff;border-inline:1px solid #e4e9ed}
+h1,h2,p{margin:0}
+.topbar{min-height:55px;padding:10px 0 7px;border-bottom:1px solid var(--line)}
+.kicker{font-size:12px;font-weight:700;color:var(--muted)}
+h1{margin-top:3px;font-size:21px}
+.lead{padding:13px 0 15px;color:var(--fg);font-size:14px;line-height:1.65}
+.materials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.material{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:236px;padding:22px 24px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit;text-decoration:none;box-shadow:0 2px 7px #26333d0a;touch-action:manipulation;transition:border-color .15s,box-shadow .15s}
+.material+.material{border-left:1px solid var(--line)}
+.material:hover{border-color:#9aafbd;box-shadow:0 4px 12px #26333d14;background:#fcfdfe}
+.material:focus-visible{outline:3px solid var(--prime-color);outline-offset:2px}
+.number{font-size:12px;font-weight:750;color:var(--prime-color)}
+.material h2{font-size:19px;line-height:1.4}
+.material p{color:var(--muted);font-size:13px;line-height:1.65}
+.open{align-self:flex-start;margin-top:auto;padding-top:16px;color:var(--prime-color);font-size:13px;font-weight:750}
+.copyright-footer{margin-top:18px;padding-top:8px;border-top:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.copyright-footer .footer-meta{display:flex;gap:14px;align-items:baseline;justify-content:flex-end;white-space:nowrap;font-size:10px;color:var(--muted)}
+.copyright-footer .footer-meta a{color:inherit;text-decoration:none}
+.copyright-footer .footer-meta a:hover,.copyright-footer .footer-meta a:focus-visible{text-decoration:underline}
+.copyright-line{display:block;font-size:10px;line-height:1.5;color:var(--muted)}
+.copyright-line a{color:inherit;text-decoration:none}.copyright-line a:hover,.copyright-line a:focus-visible{text-decoration:underline}
+@media(max-width:680px){
+ main{padding:0 12px 22px}
+ .materials{grid-template-columns:1fr;gap:12px}
+ .material{padding:17px 18px;min-height:180px}
+ .material+.material{border-left:1px solid var(--line);border-top:1px solid var(--line)}
+ h1{font-size:19px}
+ .lead{font-size:13px}
+}
+@media(max-width:860px){main{padding:0 12px 22px}}
+@media(max-width:540px){main{padding:0 8px 18px}}
+@media(prefers-reduced-motion:reduce){.material{transition:none}}
+</style>
+<style>
+[hidden]{display:none!important}
+.license-page{box-sizing:border-box;max-width:840px;margin:26px auto;padding:22px 24px;border:1px solid #d7dfe4;border-radius:6px;background:white;color:#26333d;font:14px/1.7 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
+.license-page h1{font-size:22px;margin:0 0 18px}
+.license-page h2{font-size:16px;margin:16px 0 5px}
+.license-page p{margin:5px 0 11px}
+.license-page a{color:#155c86;text-decoration:underline}
+.license-page .license-back{display:inline-block;margin-top:10px}
+</style>
+</head>
+<body>
+<main>
+ <header class="topbar">
+  <p class="kicker">茨城県立竹園高校｜2026年セミナー</p>
+  <h1>データの研究を体験しよう</h1>
+ </header>
+ <p class="lead">AIによるメール分類の学習と、グラフ上の頂点が協力して計算する仕組みを、ブラウザで体験できる2つの教材です。</p>
+ <nav class="materials" aria-label="体験教材の一覧">
+  <a class="material" href="./ai.html">
+   <span class="number">教材 01｜機械学習</span>
+   <h2>スパムメール分類AI</h2>
+   <p>200通のメールから特徴を選び、学習用とテスト用に分けて、予測・学習・評価を体験します。</p>
+   <span class="open" aria-hidden="true">教材を開く →</span>
+  </a>
+  <a class="material" href="./graph.html">
+   <span class="number">教材 02｜グラフ処理</span>
+   <h2>グラフ処理</h2>
+   <p>グラフを作成し、逐次実行（DFS）と並列実行（Pregel）による最短経路計算を比較します。PlaygroundではComputeを編集し、SSSP・CC・PageRankなどの処理を観察できます。</p>
+   <span class="open" aria-hidden="true">教材を開く →</span>
+  </a>
+ </nav>
+<footer class="copyright-footer"><small class="copyright-line">© 2026 Akiyoshi Matono (akiyoshi@mato.jp)</small><div class="footer-meta"><a href="?license" title="著作権とライセンス">License</a><span aria-label="バージョン">v1.0.0</span></div></footer>
+</main>
+<script>
+(function(){
+ if(!new URLSearchParams(location.search).has("license"))return;
+ const main=document.querySelector("main");
+ if(!main)return;
+ for(const child of main.children)child.hidden=true;
+ const section=document.createElement("section");
+ section.className="license-page";
+ section.setAttribute("aria-label","著作権とライセンス");
+ section.innerHTML=`<h1>著作権とライセンス</h1>
+ <p>Copyright &copy; 2026 Akiyoshi Matono (akiyoshi@mato.jp)</p>
+ <h2>教材本体</h2>
+ <p>独自に制作した教材のHTML・CSS・JavaScript等は、<strong>Apache License, Version 2.0 (Apache-2.0)</strong> で提供します。</p>
+ <p><a href="./LICENSE">Apache License 2.0 の全文（同梱ファイル）</a> / <a href="https://www.apache.org/licenses/LICENSE-2.0">公式ライセンス文書</a></p>
+ <h2>第三者の素材</h2>
+ <p>スパムメール分類AIのアイコンには Microsoft Fluent UI System Icons を使用しています。これらは <strong>MIT License</strong> に基づき提供され、著作権は <strong>Copyright (c) 2020 Microsoft Corporation</strong> に帰属します。MITライセンスの全文は <code>ai.html</code> 内に含まれています。</p>
+ <p>第三者の素材に対するライセンス条件は、それぞれの元のライセンスに従います。</p>
+ <a class="license-back" data-license-back href="./index.html">教材へ戻る</a>`;
+ section.querySelector("[data-license-back]").href=location.href.split(/[?#]/)[0];
+ main.appendChild(section);
+ document.title="著作権とライセンス｜"+document.title;
+})();
+</script>
+</body>
+</html>
