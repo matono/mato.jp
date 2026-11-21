@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- Copyright 2026 Akiyoshi Matono
+     Original content: SPDX-License-Identifier: Apache-2.0
+     Third-party material has its own license; see ?license. -->
+<link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f5f8fc">
@@ -282,6 +286,15 @@ main{max-width:1280px;padding:0 18px 26px}
 .topbar nav{flex:none}
 @media(max-width:860px){main{padding:0 12px 22px}}
 @media(max-width:540px){main{padding:0 8px 18px}.topbar{flex-wrap:wrap;gap:6px}.title-line{gap:4px 8px}.title-line .subtitle{display:inline;font-size:11px}}
+</style>
+<style>
+[hidden]{display:none!important}
+.license-page{box-sizing:border-box;max-width:840px;margin:26px auto;padding:22px 24px;border:1px solid #d7dfe4;border-radius:6px;background:white;color:#26333d;font:14px/1.7 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
+.license-page h1{font-size:22px;margin:0 0 18px}
+.license-page h2{font-size:16px;margin:16px 0 5px}
+.license-page p{margin:5px 0 11px}
+.license-page a{color:#155c86;text-decoration:underline}
+.license-page .license-back{display:inline-block;margin-top:10px}
 </style>
 </head>
 <body>
@@ -1115,5 +1128,28 @@ boot();
 
 
 
+<script>
+(function(){
+ if(!new URLSearchParams(location.search).has("license"))return;
+ const main=document.querySelector("main");
+ if(!main)return;
+ for(const child of main.children)child.hidden=true;
+ const section=document.createElement("section");
+ section.className="license-page";
+ section.setAttribute("aria-label","著作権とライセンス");
+ section.innerHTML=`<h1>著作権とライセンス</h1>
+ <p>Copyright &copy; 2026 Akiyoshi Matono</p>
+ <h2>教材本体</h2>
+ <p>独自に制作した教材のHTML・CSS・JavaScript等は、<strong>Apache License, Version 2.0 (Apache-2.0)</strong> で提供します。</p>
+ <p><a href="./LICENSE">Apache License 2.0 の全文（同梱ファイル）</a> / <a href="https://www.apache.org/licenses/LICENSE-2.0">公式ライセンス文書</a></p>
+ <h2>第三者の素材</h2>
+ <p>スパムメール分類AIのアイコンには Microsoft Fluent UI System Icons を使用しています。これらは <strong>MIT License</strong> に基づき提供され、著作権は <strong>Copyright (c) 2020 Microsoft Corporation</strong> に帰属します。MITライセンスの全文は <code>ai.html</code> 内に含まれています。</p>
+ <p>第三者の素材に対するライセンス条件は、それぞれの元のライセンスに従います。</p>
+ <a class="license-back" data-license-back href="./index.html">教材へ戻る</a>`;
+ section.querySelector("[data-license-back]").href=location.href.split(/[?#]/)[0];
+ main.appendChild(section);
+ document.title="著作権とライセンス｜"+document.title;
+})();
+</script>
 </body>
 </html>
