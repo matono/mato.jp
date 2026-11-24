@@ -13,7 +13,7 @@
 
 :root{color-scheme:light;--fg:#46515a;--muted:#6b7882;--accent:#6b7882;--line:#e4e9ed;--light:#f2f7fa;--warn:#6b7882;--ok:#46515a;font:14px/1.48 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
 *{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#f1f4f6;color:var(--fg)}
-main{max-width:1160px;min-height:100vh;margin:auto;padding:0 18px 25px;background:#fff;border-inline:1px solid #e4e9ed}
+main{max-width:1160px;min-height:100vh;margin:auto;padding:0 18px 25px;background:#fff;border-left:1px solid #e4e9ed;border-right:1px solid #e4e9ed}
 h1,h2,h3,p{margin:0}h1{font-size:21px}h2{font-size:19px}h3{font-size:14px}small,.small{font-size:12px}.muted{color:var(--muted)}
 button,input,select{font:inherit;max-width:100%}
 button{min-height:34px;padding:5px 10px;cursor:pointer;background:white;color:#46515a;border:1px solid #c8d0d6;border-radius:5px;font-weight:650;white-space:nowrap}
@@ -91,7 +91,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .mathline{padding:5px 8px;background:#f2f7fa;border-radius:4px;font-size:12px}
 .formula-monospace{font:600 12px/1.5 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
 .model-scroll{overflow:auto;background:#fbfdfe;border-block:1px solid var(--line)}
-.model-area{position:relative;width:930px;min-height:290px}.model-area > svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.model-area{position:relative;width:930px;min-height:290px}.model-area > svg{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;pointer-events:none}
 .graph-input,.graph-weight,.graph-bias,.graph-output,.graph-truth,.graph-match{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;padding:3px 5px;border-radius:5px}
 .graph-input{left:18px;width:210px;gap:5px;justify-content:space-between;background:#f3f5f6;border:1px solid #c8d0d6}
 .graph-input strong{font-size:15px}.graph-input span{font-size:12px;text-align:left;max-width:145px;line-height:1.25}
@@ -213,7 +213,7 @@ input[type=checkbox],input[type=range]{accent-color:var(--prime-color)}
 #prediction-formula math{margin:0}
 #model-numbers{text-align:center}
 .model-scroll{overflow:auto}
-.model-area{margin-inline:auto}
+.model-area{margin-left:auto;margin-right:auto}
 .rate-emphasis{display:flex;justify-content:center;align-items:center;gap:18px;padding:12px 16px;margin:2px 0 11px;border:1px solid #c9d4dc;border-left:5px solid var(--prime-color);background:#f5f7f8}
 .rate-title{display:flex;flex-direction:column;gap:2px}
 .rate-title strong{font-size:17px;font-weight:800;color:var(--prime-color)}
@@ -287,6 +287,21 @@ main{max-width:1280px;padding:0 18px 26px}
 .topbar nav{flex:none}
 @media(max-width:860px){main{padding:0 12px 22px}}
 @media(max-width:540px){main{padding:0 8px 18px}.topbar{flex-wrap:wrap;gap:6px}.title-line{gap:4px 8px}.title-line .subtitle{display:inline;font-size:11px}}
+
+/* Compatibility: basic layout without newer Safari flex gap or focus-visible. */
+.no-flex-gap .row > * + *{margin-left:6px}
+.no-flex-gap .split-toolbar > * + *{margin-left:6px}
+.no-flex-gap .split-search-line > * + *{margin-left:6px}
+.no-flex-gap .commandbar > * + *{margin-left:6px}
+.no-flex-gap .sticky-actions > * + *{margin-left:6px}
+.no-flex-gap .topbar-actions > * + *{margin-left:6px}
+.no-flex-gap .equation-line > * + *{margin-left:6px}
+@supports not selector(:focus-visible){button:focus,a:focus,input:focus,select:focus,textarea:focus,summary:focus{outline:2px solid var(--prime-color);outline-offset:1px}}
+.portable-equation{display:inline-flex;align-items:center;white-space:nowrap;font-size:18px;font-family:Georgia,"Times New Roman",serif;line-height:1.25}
+.portable-equation sub{font-size:70%;align-self:flex-end}.sigma{display:inline-flex;flex-direction:column;align-items:center;line-height:1;margin:0 5px}.sigma>span{font-size:26px}.sigma sup,.sigma sub{font-size:10px;align-self:center}.cases-brace{font-size:46px;font-weight:400;line-height:1;margin:0 4px}.cases{display:inline-flex;flex-direction:column;font-size:14px;line-height:1.45;font-family:system-ui,sans-serif}
+.model-scroll,.mail-list,.table-scroll{-webkit-overflow-scrolling:touch}
+@media(max-width:860px){.sticky-actions{position:relative}}
+
 </style>
 <style>
 [hidden]{display:none!important}
@@ -299,6 +314,17 @@ main{max-width:1280px;padding:0 18px 26px}
 </style>
 </head>
 <body>
+<script>
+(function(){
+ var flex=document.createElement("div");
+ flex.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden;top:-9999px";
+ flex.appendChild(document.createElement("div"));flex.appendChild(document.createElement("div"));
+ document.body.appendChild(flex);
+ if(flex.scrollHeight!==1)document.documentElement.classList.add("no-flex-gap");
+ flex.parentNode.removeChild(flex);
+})();
+</script>
+<noscript><p style="padding:16px;background:#fff;border:1px solid #aaa">この教材の操作にはJavaScriptが必要です。通常のブラウザでJavaScriptを有効にして開いてください。</p></noscript>
 <main>
 <header class="topbar"><div class="title-line"><h1>スパムメール分類AI</h1><span class="subtitle">単層パーセプトロンで学ぶメール分類（ハム:0／スパム:1）</span></div><nav aria-label="教材一覧"><a class="home-link" href="./index.html">教材一覧に戻る</a></nav></header>
 <nav class="stage-nav" aria-label="学習の進め方">
@@ -410,7 +436,7 @@ main{max-width:1280px;padding:0 18px 26px}
  <div id="analysis-summary" class="stats-row"></div>
  <div class="section"><h3>正答率の推移</h3><div id="analysis-chart"></div></div>
  <div class="section"><h3>これまでの試行</h3><div id="experiment-results"></div></div>
- <details class="section"><summary>発展：200通をすべて線形分離できる？</summary><div class="row" style="padding:6px 0"><button id="check-separability">この組合せを判定</button><span class="small muted">学習正答率とは別の判定</span></div><div id="challenge-result" role="status" aria-live="polite"></div></details>
+ <details class="section"><summary>発展：単層モデルの限界と多層パーセプトロン</summary><p class="small" style="margin:8px 0">単層パーセプトロンで200通を線形分離できる特徴を調べましょう。多層パーセプトロン（MLP）では非線形な分類境界を学習できます。</p><div class="row" style="padding:6px 0"><button id="check-separability">この組合せを判定</button><span class="small muted">学習正答率とは別の判定</span></div><div id="challenge-result" role="status" aria-live="polite"></div><div class="row" style="margin-top:10px"><a class="home-link" href="./mlp.html">多層パーセプトロン（MLP）の教材へ進む →</a></div></details>
  <div class="sticky-actions"><div class="sticky-copy small"><strong class="action-text">学習用とテスト用の正答率の変化を比較する。</strong><strong class="lesson-text">学習用で正答率が高くても、テスト用で高いとは限らない。両方で高い正答率を達成できたかな？</strong></div><button id="retry-features" class="primary">最初に戻る</button></div>
 </section>
 <footer class="footer-note"><small class="copyright-line">© 2026 Akiyoshi Matono (akiyoshi@mato.jp)</small></footer>
@@ -441,7 +467,8 @@ var FEATURE_DEFS=[
  {key:'N02',label:'漢字率',description:'漢字数 ÷（漢字＋ひらがな＋カタカナ）'},
  {key:'N04',label:'カタカナ率',description:'カタカナ数 ÷（漢字＋ひらがな＋カタカナ）'}
 ];
-var DEF=Object.fromEntries(FEATURE_DEFS.map(function(f){return[f.key,f]}));
+function entriesObject(entries){const result={};for(const pair of entries)Object.defineProperty(result,pair[0],{value:pair[1],enumerable:true,writable:true,configurable:true});return result;}
+var DEF=entriesObject(FEATURE_DEFS.map(function(f){return[f.key,f]}));
 var col=window.MAIL_AI2_KEYS;
 var rows=window.MAIL_AI2_ROWS;
 var raws=window.MAIL_AI2_RAW;
@@ -451,7 +478,7 @@ var MAILS=raws.map(function(r,i){
  if(v.id!=='M'+String(i+1).padStart(3,'0'))throw Error('メールと特徴行列のIDが一致しません: '+i);
  return{id:v.id,no:r[0],subject:r[1],body:r[2],y:v.label,values:v};
 });
-var MAIL_BY_ID=Object.fromEntries(MAILS.map(function(m){return[m.id,m]}));
+var MAIL_BY_ID=entriesObject(MAILS.map(function(m){return[m.id,m]}));
 var EVIDENCE=window.MAIL_AI2_EVIDENCE||{};
 var PII=window.MAIL_AI2_PII||{};
 // The answer mode is an optional URL-only preset; normal mode is unchanged.
@@ -539,10 +566,30 @@ function confirmDiscard(message){
 }
 function pointName(p){return({1:'prepare',2:'prepare',3:'learn',4:'learn',5:'learn',6:'eval',7:'eval'})[p]}
 function navigate(p){
- var requested=p;
- if(p>=3&&!model){notice('学習を始める前に、②でランダム分割を確定してください。',true);p=2}
- if(p>=6&&(!model||!model.frozen)){notice('⑤で学習を終えてから評価してください。',true);p=model?5:2}
- if(p===requested)notice('');
+ // A model records the confirmed split. A frozen model records confirmed evaluation weights.
+ if(p>=3&&!model){
+  if(!splitOK()){
+   navigate(2);
+   notice('学習用とテスト用の両方に、ハムとスパムを1通以上含めてください。',true);
+   return;
+  }
+  var c=countSplit(),tr=c.train[0]+c.train[1],te=c.test[0]+c.test[1];
+  if(!window.confirm('データの分割を確定しますか？\n\n学習用：'+tr+'通（ハム '+c.train[0]+'・スパム '+c.train[1]+'）\nテスト用：'+te+'通（ハム '+c.test[0]+'・スパム '+c.test[1]+'）\n\nOK：この分割で進む\nキャンセル：② 分割を確認する')){
+   navigate(2);return;
+  }
+  makeModel(p);return;
+ }
+ if(p>=6&&!model.frozen){
+  if(changesPending()){
+   navigate(5);manualFeedback='手動変更を完了または取り消してから評価してください。';renderLearn();return;
+  }
+  var trRate=accuracy(model,model.train,model.w,model.b).rate;
+  if(!window.confirm('現在のモデルで評価しますか？\n\n完了ステップ：'+model.steps+'\n完了エポック：'+model.epochs+'\n学習用正答率：'+pct(trRate)+(model.steps===0?'\nまだ学習していない初期モデルです。':'')+'\n\nOK：このモデルを確定して進む\nキャンセル：⑤ 反復に戻る')){
+   navigate(5);return;
+  }
+  freezeModel(p);return;
+ }
+ notice('');
  if(model&&p>=4&&!model.configFixed)model.configFixed=true;
  if(model&&p>=5&&!model.rateFixed)model.rateFixed=true;
  currentPoint=p;
@@ -699,7 +746,7 @@ function summarizeModel(){if(!model)return;
  ['学習用',m.train.length+'通'],['テスト用',m.test.length+'通'],['完了ステップ',String(m.steps)],['完了エポック',String(m.epochs)+' / '+maxEpochs]
  ].map(function(r){return'<div>'+r[0]+'<strong>'+r[1]+'</strong></div>'}).join('');
 }
-function makeModel(){
+function makeModel(target){
  if(!splitOK()||selected.length<2||selected.length>8){notice('特徴2〜8個と、両クラスを含む分割が必要です。',true);return false}
  var train=MAILS.filter(function(m){return split.get(m.id)==='train'}),test=MAILS.filter(function(m){return split.get(m.id)==='test'});
  model={keys:selected.slice(),scaler:makeScaler(train,selected),train:train,test:test,splitId:splitId,
@@ -711,7 +758,7 @@ function makeModel(){
  model.order=shuffled(train,1009+splitId*100);
  predictPreviewId=model.order[0].id;
  recordMetrics();manualFeedback='';
- notice('');navigate(3);
+ notice('');navigate(target||3);
  return true
 }
 function trainingSample(){
@@ -791,7 +838,7 @@ function renderGraph(mail){
  el('reroll-initial').disabled=md.configFixed||md.frozen;
  el('learning-rate').disabled=md.rateFixed||md.frozen||changesPending();
  el('prediction-formula').hidden=currentPoint!==3;
- el('prediction-formula').innerHTML='<div class="equation-line"><math xmlns="http://www.w3.org/1998/Math/MathML" aria-label="各入力と重みの積の合計にバイアスを加える"><mi>z</mi><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mn>'+md.keys.length+'</mn></munderover><msub><mi>w</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub><mo>+</mo><mi>b</mi></math><math xmlns="http://www.w3.org/1998/Math/MathML" aria-label="zが0以上ならスパム1、0未満ならハム0"><mover><mi>y</mi><mo>^</mo></mover><mo>=</mo><mrow><mo>{</mo><mtable columnalign="left"><mtr><mtd><mn>1</mn></mtd><mtd><mtext>z ≥ 0（スパム）</mtext></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mtext>z &lt; 0（ハム）</mtext></mtd></mtr></mtable></mrow></math></div>';
+ el('prediction-formula').innerHTML='<div class="equation-line"><span class="portable-equation" aria-label="各入力と重みの積の合計にバイアスを加える"><i>z</i> = <span class="sigma"><sup>'+md.keys.length+'</sup><span>∑</span><sub>i=1</sub></span> <i>w</i><sub>i</sub><i>x</i><sub>i</sub> + <i>b</i></span><span class="portable-equation" aria-label="zが0以上ならスパム1、0未満ならハム0"><i>ŷ</i> = <span class="cases-brace" aria-hidden="true">{</span><span class="cases"><span>1　(<i>z</i> ≥ 0：スパム)</span><span>0　(<i>z</i> &lt; 0：ハム)</span></span></span></div>';
  el('model-numbers').textContent='z = '+md.keys.map(function(k,i){return '('+fnum(md.w[i],3)+' × '+fnum(g.pred.x[i],3)+')'}).join(' + ')+' + ('+fnum(md.b,3)+') = '+fnum(g.pred.z,3);
 
 }
@@ -965,7 +1012,7 @@ function autoEpochs(n){
  while(md.epochs<goal&&autoStep()){done++;if(done>md.train.length*n+1)throw Error('学習の進行が不正です')}
  renderLearn()
 }
-function freezeModel(){
+function freezeModel(target){
  var md=model;if(!md||md.frozen)return;
  if(changesPending()){manualFeedback='手動変更を完了または取り消してから評価してください。';renderLearn();return}
  md.evalModel={w:md.w.slice(),b:md.b,step:md.steps,epochs:md.epochs};
@@ -974,7 +1021,7 @@ function freezeModel(){
  var tr=accuracy(md,md.train,md.evalModel.w,md.evalModel.b),te=accuracy(md,md.test,md.evalModel.w,md.evalModel.b);
  experimentLog.push({no:experimentLog.length+1,split:md.splitId,keys:md.keys.slice(),trainCount:md.train.length,testCount:md.test.length,
   steps:md.steps,eta:md.eta,initTrial:md.initTrial,train:tr.rate,test:te.rate});
- notice('');navigate(6);
+ notice('');navigate(target||6);
 }
 function evaluatePredict(mail){
  var md=model,w=md.evalModel.w,b=md.evalModel.b;
@@ -1109,7 +1156,7 @@ function boot(){
   if(!model||model.frozen||!window.confirm('重みと学習履歴を消し、最初から学習しますか？'))return;
   makeModel();navigate(4)
  });
- el('freeze-evaluation').addEventListener('click',freezeModel);
+ el('freeze-evaluation').addEventListener('click',function(){freezeModel()});
  el('eval-rows').addEventListener('click',function(e){
   var row=e.target.closest('tr[data-eval-mail]');if(row)showEvalMail(row.dataset.evalMail)
  });
@@ -1121,6 +1168,7 @@ function boot(){
  el('to-analysis').addEventListener('click',function(){navigate(7)});
  el('check-separability').addEventListener('click',checkSeparability);
  el('retry-features').addEventListener('click',function(){navigate(1);window.scrollTo(0,0)});
+ splitRnd();
  navigate(1)
 }
 boot();

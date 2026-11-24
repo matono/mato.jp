@@ -8,13 +8,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f1f4f6">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline' 'unsafe-eval' blob:;worker-src blob:;style-src 'unsafe-inline';img-src data:;connect-src 'none';base-uri 'none';form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline' 'unsafe-eval' blob:;worker-src blob:;child-src blob:;style-src 'unsafe-inline';img-src data:;connect-src 'none';base-uri 'none';form-action 'none'">
 <title>グラフ処理</title>
 <style>
 :root{color-scheme:light;--prime-color:#155c86;--fg:#26333d;--muted:#64717b;--line:#d7dfe4;--soft:#f3f5f6;font:14px/1.48 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:#f1f4f6;color:var(--fg)}
-main{max-width:1280px;min-height:100vh;margin:0 auto;padding:0 18px 25px;background:#fff;border-inline:1px solid #e4e9ed}
+main{max-width:1280px;min-height:100vh;margin:0 auto;padding:0 18px 25px;background:#fff;border-left:1px solid #e4e9ed;border-right:1px solid #e4e9ed}
 h1,h2,h3,p{margin:0}a{color:var(--prime-color)}
 .topbar{min-height:55px;padding:10px 0 7px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .title-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px 12px;flex:1;min-width:0}
@@ -121,6 +121,13 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .dfs-model-details summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--prime-color)}
 .dfs-model-details summary:focus-visible{outline:2px solid var(--prime-color);outline-offset:3px}
 .dfs-model-details .compute-note{margin-top:8px}
+.playground-challenge{margin-top:16px}
+.playground-challenge>p,.playground-challenge section>p{font-size:13px;line-height:1.65;margin:8px 0}
+.playground-challenge section{border-top:1px solid var(--line);padding:10px 0}
+.playground-challenge h3{margin:0 0 5px;font-size:14px;color:var(--prime-color)}
+.playground-challenge dl{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:6px 12px;margin:8px 0;font-size:13px;line-height:1.6}
+.playground-challenge dt{font-weight:650}.playground-challenge dd{margin:0;min-width:0;overflow-wrap:break-word}
+@media(max-width:540px){.playground-challenge dl{grid-template-columns:1fr;gap:3px}.playground-challenge dd{margin-bottom:6px}}
 .dfs-model-source{margin:8px 0 0;padding:10px 9px;background:#f7f9fa;border-radius:4px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;white-space:pre;overflow:auto;tab-size:2}
 @media(max-width:1200px){.dfs-model-source{font-size:13px}}
 .compute-box{--code-gutter:24px;--code-gap:11px;--code-indent:2ch;font:13px/21px ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;color:var(--fg);border:1px solid var(--line);border-radius:5px;overflow:auto;background:#f7f9fa;padding:4px 0;max-height:420px}
@@ -129,6 +136,14 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .code-line code{font:inherit;line-height:inherit;white-space:pre;tab-size:2;color:inherit}
 .code-line.body-line code{padding-left:var(--code-indent)}
 .code-line.hot{padding-left:5px;border-left:4px solid var(--prime-color);background:#e5edf2}
+.code-line .code-help-token{display:inline;min-height:0;padding:0;margin:0;border:0;border-radius:2px;background:transparent;font:inherit;line-height:inherit;color:inherit;white-space:pre;text-decoration:underline dotted var(--prime-color);text-underline-offset:3px;cursor:pointer;touch-action:manipulation}
+.code-line .code-help-token:hover:not(:disabled){background:transparent}
+.code-line .code-help-token.help-selected,.code-line .code-help-token.help-selected:hover:not(:disabled){background:var(--prime-color);color:white;text-decoration-color:white}
+.code-line .code-help-token:focus-visible{outline:2px solid var(--prime-color);outline-offset:1px}
+.code-help-popup{position:fixed;z-index:40;box-sizing:border-box;width:max-content;max-width:min(340px,calc(100vw - 20px));padding:12px 14px;border:1px solid var(--prime-color);border-radius:6px;background:white;color:var(--fg);box-shadow:0 4px 18px #26333d26;font:14px/1.6 system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif;overflow-wrap:anywhere}
+.code-help-popup[hidden]{display:none}
+.code-help-popup strong{display:block;color:var(--prime-color);font-size:13px;margin-bottom:4px}
+
 @media(max-width:1200px){.compute-box{font-size:16px;line-height:24px;--code-gutter:29px;--code-gap:8px}.code-line{line-height:24px}}
 .pregel-state-note{font-size:12px;color:var(--muted);margin:7px 0}
 .run-key{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
@@ -138,24 +153,25 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .run-key .key-square.first,.run-key .key-square.current{background:#155c86;border:2px solid #155c86}
 .run-key .key-square.path{background:#e8f1f6;border:2px solid #155c86}
 .run-key .key-square.receive{background:#fff;border:2px solid #155c86}
-.edge-swatch{display:inline-block;width:25px;vertical-align:middle;margin-right:5px;border-top:3px solid #aab7c0}
-.edge-swatch.active{border-top:4px solid var(--prime-color)}
-.edge-swatch.seen{border-top:3px solid #9bc2dc}
+.edge-swatch{display:inline-block;width:25px;vertical-align:middle;margin-right:5px;border-top:2px solid #aab7c0}
+.edge-swatch.active{border-top:3px solid var(--prime-color)}
+.edge-swatch.seen{border-top:2.5px solid #9bc2dc}
 
 .edge-ink{stroke:var(--prime-color);stroke-width:4.4;fill:none;pointer-events:none}
-.motion-trail{stroke:var(--prime-color);stroke-width:6;stroke-linecap:round;pointer-events:none}
+.motion-trail{stroke:var(--prime-color);stroke-width:3;stroke-linecap:round;pointer-events:none}
 .motion-dot{pointer-events:none}
-.motion-dot circle{fill:var(--prime-color);stroke:#fff;stroke-width:2}
-.motion-dot text{fill:#fff;font-weight:750;font-size:11px;text-anchor:middle;dominant-baseline:middle}
+.motion-dot circle{fill:var(--prime-color);stroke:#fff;stroke-width:1.5}
+.motion-dot text{fill:#fff;font-weight:700;font-size:12px;text-anchor:middle;dominant-baseline:middle}
 .run-card-current text,.run-card-current .run-row-value.updated,.run-card-first text{fill:#fff}
 .run-card-current line,.run-card-first line{stroke:#9ac2dc}
 .run-card-receive rect{stroke:#155c86;stroke-width:3}
 .run-key .active-dot{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:50%;background:#155c86;vertical-align:0}
 .run-key .halted-dot{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:50%;background:#aab7c0;vertical-align:0}
 .run-vertex-label{font-size:16px;font-weight:700;fill:#26333d}
-.run-row-label{font-size:12px;fill:#64717b}
-.run-row-value{font-size:14px;fill:#26333d;font-weight:600}
-.run-row-value.updated{fill:#155c86;font-weight:800}
+.run-row-label{font-size:12px;fill:#64717b;font-weight:400}
+.run-row-value{font-size:12px;fill:#26333d;font-weight:650}
+.run-card-status{font-size:12px;font-weight:650;fill:#26333d}
+.run-row-value.updated{fill:#155c86}
 @media(max-width:620px){.run-summary{grid-template-columns:1fr 1fr}.run-workspace .operations{display:block}.run-controls .field{flex-grow:1}}
 @media(max-width:920px){
  .run-workspace{grid-template-columns:1fr;gap:12px}
@@ -291,6 +307,20 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .pregel-api-table thead th{background:var(--soft)}
 .pregel-api-table tbody th{width:50%;font-weight:500;overflow-wrap:anywhere}
 .pregel-api-table code{font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
+
+/* Compatibility: basic layout without newer Safari flex gap or focus-visible. */
+.no-flex-gap .row > * + *{margin-left:6px}
+.no-flex-gap .form-row > * + *{margin-left:6px}
+.no-flex-gap .graph-title-controls > * + *{margin-left:6px}
+.no-flex-gap .graph-zoom-controls > * + *{margin-left:6px}
+.no-flex-gap .run-controls > * + *{margin-left:6px}
+.no-flex-gap .run-key > * + *{margin-left:6px}
+.no-flex-gap .topbar-actions > * + *{margin-left:6px}
+.no-flex-gap .learning-footer > * + *{margin-left:6px}
+@supports not selector(:focus-visible){button:focus,a:focus,input:focus,select:focus,textarea:focus,summary:focus{outline:2px solid var(--prime-color);outline-offset:1px}}
+.graph-stage,.dfs-model-source,.compute-box{-webkit-overflow-scrolling:touch}
+@media(max-width:680px){.learning-footer{position:relative}}
+
 </style>
 <style>
 [hidden]{display:none!important}
@@ -303,6 +333,17 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 </style>
 </head>
 <body>
+<script>
+(function(){
+ var flex=document.createElement("div");
+ flex.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden;top:-9999px";
+ flex.appendChild(document.createElement("div"));flex.appendChild(document.createElement("div"));
+ document.body.appendChild(flex);
+ if(flex.scrollHeight!==1)document.documentElement.classList.add("no-flex-gap");
+ flex.parentNode.removeChild(flex);
+})();
+</script>
+<noscript><p style="padding:16px;background:#fff;border:1px solid #aaa">この教材の操作にはJavaScriptが必要です。通常のブラウザでJavaScriptを有効にして開いてください。</p></noscript>
 <main>
 <header class="topbar"><div class="title-line"><h1>グラフ処理</h1><span class="subtitle">グラフの基礎から並列・分散グラフ処理へ</span></div><a class="home-link" href="./index.html">教材一覧に戻る</a></header>
 <nav class="stage-nav" aria-label="学習の進め方">
@@ -354,7 +395,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 </div>
 <div class="operation-section initial-values-section">
 <h3>頂点の初期value</h3>
-<div class="form-row"><div class="field"><label for="initial-values-preset">一括設定</label><select id="initial-values-preset"><option value="sssp">SSSP（頂点1を0、残り∞）</option><option value="zero">すべて0</option><option value="infinity">すべて∞</option><option value="id">CC（頂点ID）</option><option value="rank">PageRank（1 / 頂点数）</option><option value="custom">すべて右の値</option></select></div><input type="text" id="initial-values-custom" aria-label="全頂点に設定する値" placeholder="数値または∞" hidden><button type="button" id="initial-values-apply">適用</button></div>
+<div class="form-row"><div class="field"><label for="initial-values-preset">一括設定</label><select id="initial-values-preset"><option value="sssp">SSSP（頂点1を−1、残り∞）</option><option value="zero">すべて0</option><option value="infinity">すべて∞</option><option value="id">CC（頂点ID）</option><option value="rank">PageRank（1 / 頂点数）</option><option value="custom">すべて右の値</option></select></div><input type="text" id="initial-values-custom" aria-label="全頂点に設定する値" placeholder="数値または∞" hidden><button type="button" id="initial-values-apply">適用</button></div>
 <div id="vertex-values" class="vertex-values" aria-label="頂点ごとの初期value"></div>
 <p id="initial-values-status" class="hint" role="status"></p>
 </div>
@@ -386,9 +427,9 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <marker id="arrow2-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker>
 <marker id="arrow2-seen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#9bc2dc"/></marker>
 </defs><g id="edge-layer2"></g><g id="vertex-layer2"></g><g id="token-layer2"></g></svg></div>
-<div class="run-key" aria-label="Cardの状態"><span><i class="key-square"></i>未到達（∞）</span><span><i class="key-square path"></i>経路中</span><span><i class="key-square current"></i>現頂点（初／再／復）</span><span><i class="key-square done"></i>距離判明（更新あり）</span></div>
+<div class="run-key" aria-label="Cardの状態"><span><i class="key-square"></i>未処理（−1／∞）</span><span><i class="key-square path"></i>経路中</span><span><i class="key-square current"></i>現頂点（初／再／復）</span><span><i class="key-square done"></i>距離判明（更新あり）</span></div>
 <div class="run-key" aria-label="辺の状態"><span><i class="edge-swatch"></i>未確認</span><span><i class="edge-swatch active"></i>現在のパス</span><span><i class="edge-swatch seen"></i>確認済み</span></div>
-<p id="dfs-graph-guide" class="graph-guide">探索者は1人です。濃い青は現在たどっている道、薄い青は確認済みの辺です。一度調べた頂点でも、より短い経路が見つかった場合は距離を更新して再探索します。</p>
+<p id="dfs-graph-guide" class="graph-guide">各頂点のinput（受信した距離候補）、value（保持する距離）、output（探索依頼）、candidate（更新候補）を確認しましょう。濃い青は現在の経路、薄い青は確認済みの辺です。</p>
 <div id="dfs-analysis" class="analysis-panel" aria-label="DFS実行の分析"></div>
 </section>
 <section class="operations dfs-operations" aria-labelledby="dfs-title">
@@ -408,28 +449,29 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 </div><p id="dfs-init-error" class="sssp-error" role="alert" hidden></p></div>
 <div class="run-code" aria-label="各頂点で行うComputeの例"><h3>頂点での処理（Compute）</h3>
 <div id="dfs-code" class="compute-box code-read" aria-label="頂点で実行するComputeと現在の実行行"></div>
-<p class="compute-note">逐次実行モデルでは、1回の訪問で1つの距離候補（<code>input</code>）を受け取ります。</p>
-<p class="compute-note">現在の<code>value</code>と<code>input</code>を比較し、距離が短くなった場合は、valueを更新して隣接頂点の探索を要求します。また、開始頂点の初回処理では、距離候補1を使って隣接頂点の探索を要求します。</p>
+</div>
+<div class="run-note" id="dfs-status" role="status" aria-live="polite"></div>
 <details class="dfs-model-details">
 <summary>DFS実行モデルのコードを見る</summary>
-<p class="compute-note">上のComputeを各頂点で呼び出す処理です。各頂点は <code>value</code>（①で指定した初期値）と <code>neighbors</code>（隣接頂点の配列）を持ち、<code>dfs(startVertex, 0)</code> で開始します。アニメーション履歴を記録する部分は省略しています。</p>
+<p class="compute-note">上のComputeを各頂点で呼び出す処理です。各頂点は <code>value</code>（①で指定した初期値）と <code>neighbors</code>（隣接頂点の配列）を持ち、<code>dfs(startVertex, null)</code> で開始します。アニメーション履歴を記録する部分は省略しています。outputには宛先と値を記録し、Computeの終了後に順番に探索します。</p>
 <pre class="dfs-model-source"><code>function dfs(vertex, input) {
-  let next = null;
+  const output = [];
 
-  compute(input, vertex.value, {
+  compute(input, {
+    getValue() { return vertex.value; },
     setValue(v) { vertex.value = v; },
-    exploreNeighbors(v) { next = v; }
+    exploreNeighbors(v) {
+      for (const to of vertex.neighbors) {
+        output.push({ to, value: v });
+      }
+    }
   });
 
-  if (next === null) return;
-
-  for (const neighbor of vertex.neighbors) {
-    dfs(neighbor, next);
+  for (const message of output) {
+    dfs(message.to, message.value);
   }
 }</code></pre>
 </details>
-</div>
-<div class="run-note" id="dfs-status" role="status" aria-live="polite"></div>
 
 </section></div>
 </section>
@@ -523,7 +565,7 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <marker id="arrow3-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker></defs>
 <g id="edge-layer3"></g><g id="vertex-layer3"></g><g id="token-layer3"></g></svg></div>
 <div class="run-key" aria-label="Pregelの頂点状態"><span><i class="active-dot"></i>Active（活性）</span><span><i class="halted-dot"></i>Halted（停止）</span><span>太枠：現在のコード行を実行した頂点</span></div>
-<p class="graph-guide">各頂点のinputs（受信した距離候補）、value（保存した最短距離候補）、output（送信予約）を確認しましょう。「次の行」で1行ずつ進み、「次のSS」でSuperstepを進めます。</p>
+<p class="graph-guide">各頂点のinputs（受信した距離候補）、value（保持する距離）、output（送信予約）、candidate（更新候補）を確認しましょう。「次の行」で1行ずつ進み、「次のSS」でSuperstepを進めます。</p>
 <div id="pregel-analysis" class="analysis-panel" aria-label="Pregel実行の分析"></div>
 </section>
 <section class="operations run-operations" aria-labelledby="pregel-title">
@@ -544,14 +586,11 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="run-code" aria-label="PregelのCompute">
 <h3>頂点での処理（Compute）</h3>
 <div id="pregel-code" class="compute-box code-read" aria-label="行番号付きPregelのコードと現在の実行行"></div>
-<p class="compute-note">Pregelでは複数の頂点からメッセージを受信するため、<code>inputs</code>は配列になります。</p>
-<p class="compute-note">SS0では全頂点がActiveで、inputsは空です。</p>
-<p class="compute-note">現在の<code>value</code>と受信した値（inputs）の最小値（<code>next</code>）を比較し、距離が短くなった場合は、valueを更新して隣接頂点にメッセージを送ります。また、SS0では開始頂点から隣接頂点に距離候補1を送ります。</p>
 </div>
 <div id="pregel-status" class="run-note" role="status" aria-live="polite"></div>
 <details class="dfs-model-details pregel-model-details">
 <summary>Pregel実行モデルのコードを見る</summary>
-<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は単一Workerで頂点を順に処理する教材用シミュレータです。</p>
+<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は頂点を順に処理する教材用シミュレータです。</p>
 <pre class="dfs-model-source"><code>let inbox = emptyInbox();
 
 for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
@@ -569,6 +608,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
       outDegree: vertex.outNeighbors.length,
       params,
       outNeighbors() { return [...vertex.outNeighbors]; },
+      getValue() { return vertex.value; },
       setValue(v) { vertex.value = v; },
       send(to, v) { outbox.push({ from: vertex.id, to, value: v }); },
       sendToNeighbors(v) {
@@ -577,7 +617,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
       voteToHalt() { vertex.active = false; }
     };
 
-    compute(inputs, vertex.value, api);
+    compute(inputs, api);
   }
 
   if (vertices.every(v =&gt; !v.active) &amp;&amp; outbox.length === 0)
@@ -588,6 +628,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
 <table class="pregel-api-table"><caption>Computeから利用できるAPI</caption>
 <thead><tr><th scope="col">API</th><th scope="col">役割</th></tr></thead>
 <tbody>
+<tr><th scope="row"><code>api.getValue()</code></th><td>頂点が現在保持する値を取得</td></tr>
 <tr><th scope="row"><code>api.setValue(v)</code></th><td>頂点の値を更新</td></tr>
 <tr><th scope="row"><code>api.send(to, v)</code></th><td>指定頂点へメッセージを送信予約</td></tr>
 <tr><th scope="row"><code>api.sendToNeighbors(v)</code></th><td>すべての出辺の接続先へ送信予約</td></tr>
@@ -606,7 +647,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
 
 <section id="page5" class="playground4" aria-labelledby="title5" hidden>
  <div class="page-head"><h2 id="title5">⑤ Pregel：Playground ― Computeを自由に変える</h2>
- <div class="page-description"><p><strong>SSSP・PageRank・連結成分（CC）</strong>のComputeを選択・編集し、<strong>行送り</strong>と<strong>Superstep送り</strong>で処理を観察します。</p></div></div>
+ <div class="page-description"><p><strong>SSSP・連結成分（CC）・PageRank</strong>のComputeを選択・編集し、<strong>行送り</strong>と<strong>Superstep送り</strong>で処理を観察します。</p></div></div>
  <div class="workspace run-workspace">
   <section class="graph-area" aria-label="Playgroundグラフ">
    <div class="section-heading"><h3>頂点・辺と実行状態</h3><div class="graph-title-controls">
@@ -621,13 +662,13 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
    <div class="graph-stage run-graph-stage" id="graph-view4">
     <svg id="graph4" viewBox="0 0 800 800" role="img" aria-label="頂点ごとの入出力・実行状態を表示するPregel Playground">
      <defs>
-      <marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#aab7c0"/></marker>
-      <marker id="arrow4-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker>
+      <marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#aab7c0"/></marker>
+      <marker id="arrow4-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker>
      </defs><g id="edge-layer4"></g><g id="vertex-layer4"></g><g id="token-layer4"></g>
     </svg>
    </div>
    <div class="run-key"><span><i class="active-dot"></i>Active</span><span><i class="halted-dot"></i>Halted</span><span>太枠：この文の実行頂点</span><span>青い円：メッセージ</span></div>
-   <p class="graph-guide">頂点には inputs / value / output / current / next を表示します。</p>
+   <p class="graph-guide">頂点には inputs / value / output と、更新候補のローカル変数 candidate を表示します。candidateはComputeごとに初期化され、値を代入するまでは「—」です。</p>
    <div id="p4-analysis" class="analysis-panel" aria-label="Playground実行の分析"></div>
   </section>
   <section class="operations run-operations" aria-labelledby="p4-title">
@@ -660,21 +701,20 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
    <div class="run-code">
     <h3>Compute関数（JavaScript）</h3>
     <div id="p4-editor" class="compute-box p4-code-editor">
-     <div class="code-line"><span class="num" aria-hidden="true">1</span><code>function compute(inputs, value, api) {</code></div>
-     <div class="code-line"><span class="num" aria-hidden="true">2</span><code>  let current = value;</code></div>
-     <div class="code-line"><span class="num" aria-hidden="true">3</span><code>  let next;</code></div>
-     <div class="p4-code-input"><div id="p4-editor-gutter" class="p4-code-gutter" aria-hidden="true"></div><textarea id="p4-code-input" maxlength="8000" spellcheck="false" autocorrect="off" autocapitalize="off" aria-label="Compute本文の編集"></textarea></div>
-     <div class="code-line"><span class="num" id="p4-editor-tail-num" aria-hidden="true">5</span><code>}</code></div>
+     <div class="code-line"><span class="num" aria-hidden="true">1</span><code>function compute(inputs, api) {</code></div>
+     <div class="code-line"><span class="num" aria-hidden="true">2</span><code>  let candidate;</code></div>
+     <div class="p4-code-input"><div id="p4-editor-gutter" class="p4-code-gutter" aria-hidden="true"></div><textarea id="p4-code-input" maxlength="8200" spellcheck="false" autocorrect="off" autocapitalize="off" aria-label="Compute本文の編集"></textarea></div>
+     <div class="code-line"><span class="num" id="p4-editor-tail-num" aria-hidden="true">4</span><code>}</code></div>
     </div>
     <div id="p4-trace" class="compute-box code-read p4-trace" hidden aria-label="実行コードと行番号"></div>
-    <p class="compute-note">行単位の同期は学習用で、実際のPregelの同期はSuperstep境界です。</p>
+    <p class="compute-note">candidateは教材用の観測変数です。宣言は固定されており、本文では自由に代入できます。他のローカル変数も宣言できますが、カードには表示しません。行単位の同期は学習用で、実際のPregelの同期はSuperstep境界です。</p>
    </div>
    <p id="p4-status" class="run-note" role="status" aria-live="polite">サンプルを選んで「コードを確定」を押してください。</p>
 
    <p class="p4-state" id="p4-storage-status" role="status">名前付きユーザComputeとグラフを、このブラウザに自動保存します。</p>
 <details class="dfs-model-details pregel-model-details">
 <summary>Pregel実行モデルのコードを見る</summary>
-<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は単一Workerで頂点を順に処理する教材用シミュレータです。</p>
+<p class="compute-note">実行モデルの概念を示す擬似コードです。SS0では全頂点がActiveで、送信したメッセージは次のSuperstepで届きます。実際の⑤は頂点を順に処理する教材用シミュレータです。</p>
 <pre class="dfs-model-source"><code>let inbox = emptyInbox();
 
 for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
@@ -692,6 +732,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
       outDegree: vertex.outNeighbors.length,
       params,
       outNeighbors() { return [...vertex.outNeighbors]; },
+      getValue() { return vertex.value; },
       setValue(v) { vertex.value = v; },
       send(to, v) { outbox.push({ from: vertex.id, to, value: v }); },
       sendToNeighbors(v) {
@@ -700,7 +741,7 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
       voteToHalt() { vertex.active = false; }
     };
 
-    compute(inputs, vertex.value, api);
+    compute(inputs, api);
   }
 
   if (vertices.every(v =&gt; !v.active) &amp;&amp; outbox.length === 0)
@@ -708,9 +749,11 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
   inbox = deliver(outbox);
 }</code></pre>
 <p class="compute-note"><code>emptyInbox</code>・<code>deliver</code>などは説明用の処理です。頂点への配送と終了判定は実行モデルが担当します。</p>
+<p class="compute-note">メッセージには有限の数値・文字列・真偽値・有限数値の一次元配列（最大128要素）を指定できます。配列は1件のメッセージとして送信予約時にコピーされます。<code>inputs</code> は受信したメッセージの配列なので、配列メッセージを受信した場合は <code>[[2, 3], [1, 3]]</code> のような配列になります。頂点のvalueは従来どおり有限数値またはInfinityです。</p>
 <table class="pregel-api-table"><caption>Computeから利用できるAPI</caption>
 <thead><tr><th scope="col">API</th><th scope="col">役割</th></tr></thead>
 <tbody>
+<tr><th scope="row"><code>api.getValue()</code></th><td>頂点が現在保持する値を取得</td></tr>
 <tr><th scope="row"><code>api.setValue(v)</code></th><td>頂点の値を更新</td></tr>
 <tr><th scope="row"><code>api.send(to, v)</code></th><td>指定頂点へメッセージを送信予約</td></tr>
 <tr><th scope="row"><code>api.sendToNeighbors(v)</code></th><td>すべての出辺の接続先へ送信予約</td></tr>
@@ -725,6 +768,26 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
 </details>
   </section>
  </div>
+<details class="dfs-model-details playground-challenge">
+ <summary>発展：Computeを書いて新しい問題を解いてみよう</summary>
+ <p>① グラフ作成で頂点・辺・初期valueを設定し、⑤ PlaygroundでComputeを編集して実行します。コードを確定し、行送り・SS送りで途中の状態を確認し、最後のvalueが課題の条件を満たすか確かめましょう。SSSPやCCのコードを出発点として利用できます。</p>
+ <section aria-labelledby="challenge-reachability">
+  <h3 id="challenge-reachability">課題1　2頂点間の到達可能性（Reachability）</h3>
+  <p>有向グラフで、指定した頂点Aから目的頂点Bへ到達できる経路が存在するかを判定するComputeを書いてください。AとBは異なる頂点です。すべての頂点の到達可能性を求める必要はありません。</p>
+  <dl><dt>初期value</dt><dd>開始頂点Aは1、目的頂点Bは2、それ以外は0。AとBはそれぞれ1つだけ指定します。</dd><dt>目標</dt><dd>計算終了時、Bのvalueが3なら到達可能、2のままなら到達不可能です。途中の頂点は情報を受け取ったことを1で記録できます。Bに情報が届いたら、Bから先に伝える必要はありません。</dd><dt>ヒント</dt><dd>Aから辺の向きに沿って情報を伝えます。初めて情報を受け取った途中の頂点だけが次に伝え、Bで受け取ったことを記録します。サイクルがあっても同じ情報を送り続けないようにしましょう。<code>api.voteToHalt()</code> は現在の頂点だけを停止するため、Bに到達しても他の頂点の処理は自然に終了するまで続きます。</dd><dt>試してみよう</dt><dd>Aを頂点1、Bを頂点3にして、1→2→3、3→4、4→2という有向グラフを作ります。Bには到達可能ですが、Bで伝播を止めれば4のvalueは0のままです。2→3の向きを逆にして、到達不可能になることも確かめましょう。</dd></dl>
+ </section>
+ <section aria-labelledby="challenge-common">
+  <h3 id="challenge-common">課題2　2地点からの共通到達可能性</h3>
+  <p>頂点1が情報A、頂点2が情報Bを発信します。有向グラフで両方の情報が届く頂点を見つけるComputeを書いてください。</p>
+  <dl><dt>初期value</dt><dd>頂点1は1、頂点2は2、それ以外は0。</dd><dt>目標</dt><dd>0＝未到達、1＝Aのみ、2＝Bのみ、3＝両方。最終valueが3の頂点が答えです。</dd><dt>ヒント</dt><dd>新しく受信した情報と、以前に受け取った情報を統合します。JavaScriptのビット論理和 <code>|</code> では、<code>1 | 2</code> は3、<code>1 | 1</code> は1になります。単純な足し算では同じ情報が重複します。</dd><dt>試してみよう</dt><dd>1→3、2→3、3→4、2→5のグラフで、3・4は両方、5はBのみになります。AとBが異なるSuperstepで届くグラフでも試しましょう。</dd></dl>
+ </section>
+ <section aria-labelledby="challenge-triangle">
+  <h3 id="challenge-triangle">課題3　三角形の検出</h3>
+  <p>無向グラフで、自分の隣接頂点のうち、互いにも隣接している2頂点が存在するか調べるComputeを書いてください。3頂点すべてが互いに接続する三角形に所属する頂点を検出します。</p>
+  <dl><dt>初期value</dt><dd>すべての頂点を0にする。</dd><dt>目標</dt><dd>三角形に1つ以上所属する頂点は1、それ以外は0。三角形の個数を数える必要はありません。</dd><dt>ヒント</dt><dd><code>api.outNeighbors()</code> で隣接頂点のID一覧を取得できます。隣接頂点同士でこの情報を交換してみましょう。<code>api.sendToNeighbors(api.outNeighbors())</code> のように数値配列をそのまま送ることができます。自分の隣接頂点一覧と、ある隣接頂点から届いた隣接頂点一覧の両方に含まれる頂点を探してください。例えば、自分Aの隣接頂点がB・Cで、Bから届いた一覧がA・Cなら、A―B・A―C・B―Cの3辺が存在します。配列に値が含まれるかは <code>配列.includes(値)</code> で確認できます。</dd><dt>試してみよう</dt><dd>1―2、2―3、3―1、3―4のグラフでは1・2・3だけが三角形に所属します。三角形のないグラフや孤立頂点も試しましょう。</dd></dl>
+ </section>
+ <p id="challenge-answer-note" class="compute-note" hidden>解答例モード：①の組み込みグラフと⑤の組み込みComputeから、同じ課題名の定義をそれぞれ選択してください。通常の教材とは別に保存します。</p>
+</details>
 </section>
 <footer id="learning-footer" class="learning-footer" aria-label="学習のまとめと次への操作">
 <div class="footer-copy"><span id="footer-action" class="action-text"></span><span id="footer-lesson" class="lesson-text"></span></div>
@@ -732,8 +795,12 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
 </footer>
 <footer class="footer-note"><small class="copyright-line">© 2026 Akiyoshi Matono (akiyoshi@mato.jp)</small></footer>
 </main>
-<script id="playground4-worker-source" type="text/plain">
+<script id="playground4-worker-source">
+(function(){
+
 "use strict";
+function entriesObject(entries){const result={};for(const pair of entries)Object.defineProperty(result,pair[0],{value:pair[1],enumerable:true,writable:true,configurable:true});return result;}
+
 function validateGraph(graph){
  if(!graph||typeof graph!=="object"||Array.isArray(graph))throw Error("グラフはJSONオブジェクトで指定してください");
  if(Object.keys(graph).some(k=>k!=="vertices"&&k!=="edges"&&k!=="values"))throw Error("グラフには vertices、edges、values のみ指定してください");
@@ -748,12 +815,11 @@ function validateGraph(graph){
  if(!Array.isArray(graph.values)||graph.values.length!==ids.length||graph.values.some(v=>v!=="Infinity"&&!(typeof v==="number"&&Number.isFinite(v))))throw Error("頂点の初期valueが不正です");
  return {vertices:ids.slice(),edges:edges.map(e=>e.slice()),values:graph.values.slice()};
 }
-const copy=x=>Array.isArray(x)?x.map(copy):x!==null&&typeof x==="object"?Object.fromEntries(Object.entries(x).map(([k,v])=>[k,copy(v)])):x,
+const copy=x=>Array.isArray(x)?x.map(copy):x!==null&&typeof x==="object"?entriesObject(Object.entries(x).map(([k,v])=>[k,copy(v)])):x,
  lineAt=(s,i)=>s.slice(0,i).split("\n").length;
-function instrument(src){
- if(src.length>8000)throw Error("コードは8000文字以内です");
+function instrument(src,lineOffset=0){
+ if(src.length>8220)throw Error("コードは8200文字以内です");
  if(/\b(?:while|do|switch|try|catch|finally|class|async|await|import|export|eval|Function|globalThis|self|postMessage|importScripts|fetch|XMLHttpRequest|WebSocket|constructor|prototype|debugger|with|yield|return|break|continue)\b/.test(src))throw Error("未対応の構文・識別子があります（非同期処理、動的コード、while等は非対応）");
- if(/\b(?:const|let|var)\s+(?:current|next)\b/.test(src))throw Error("current と next は宣言済みです");
  if(/<\/script/i.test(src))throw Error("HTMLのscript終了タグは禁止");
  for(const [i,row] of src.split("\n").entries()){
   const t=row.replace(/\/\/.*$/,"").trim();
@@ -788,13 +854,13 @@ function instrument(src){
     const open=ws(e);if(src[open]!=="(")throw Error("行 "+lineAt(src,i)+"：条件式がありません");
     const close=matching(open);
     if(src[ws(close+1)]!=="{")throw Error("行 "+lineAt(src,i)+"：本体は { } で囲んでください");
-    if(word==="if"){add(open+1,"yield* __cond((",1);add(close,"),"+lineAt(src,i)+",current,next)");}
+    if(word==="if"){add(open+1,"yield* __cond((",1);add(close,"),"+(lineAt(src,i)+lineOffset)+",__observe())");}
    }
    i=e-1;continue;
   }
   if(c==="(")paren++;else if(c===")")paren--;
   else if(c==="[")square++;else if(c==="]")square--;
-  else if(c===";"&&paren===0&&square===0)add(i+1," yield __trace("+lineAt(src,i)+",current,next);");
+  else if(c===";"&&paren===0&&square===0)add(i+1," yield __trace("+(lineAt(src,i)+lineOffset)+",__observe());");
  }
  if(quote||blockComment)throw Error("文字列またはコメントが閉じられていません");
  ins.sort((a,b)=>b.pos-a.pos||b.prio-a.prio);
@@ -802,37 +868,53 @@ function instrument(src){
  return src;
 }
 function compile(body){
- try{return new Function("return function* compute(inputs,value,api,__trace,__cond){\nconst input=inputs;let current=value;\nlet next;\n"+instrument(body)+"\n}")();}
+ try{
+  if(body.length>8200)throw Error("コードは8200文字以内です");
+  // Observe the fixed binding, not an arbitrary local variable with the same name.
+  if(/\b(?:let|const|var)\s+candidate\b/.test(body))throw Error("candidateは宣言済みです。本文ではcandidate = ...; と代入してください。");
+  return new Function("return function* compute(inputs,api,__trace,__cond){\nlet candidate; const __observe=()=>candidate; yield __trace(1,candidate);\n"+instrument(body,1)+"\n}")();
+ }
  catch(e){throw Error("構文エラー: "+e.message);}
 }
-function record(n){return{id:n.id,input:copy(n.input),value:n.value,output:copy(n.output),current:n.current===undefined?null:n.current,next:n.next===undefined?{__pregelUndefined:true}:n.next,active:n.active};}
+// Snapshot numeric arrays at send time. A message is one array, not a batch of scalar messages.
+function copyMessageValue(x){
+ if(Array.isArray(x)){
+  if(x.length>128)throw Error("送信する数値配列は最大128要素です");
+  const snapshot=[];
+  for(let i=0;i<x.length;i++){
+   const value=x[i];
+   if(typeof value!=="number"||!Number.isFinite(value))throw Error("送信配列の要素は有限の数値のみです");
+   snapshot.push(value);
+  }
+  return snapshot;
+ }
+ if(typeof x==="number"&&Number.isFinite(x)||typeof x==="string"||typeof x==="boolean")return x;
+ throw Error("送信値は有限の数値・文字列・真偽値・有限数値の一次元配列です");
+}
+function record(n){return{id:n.id,input:copy(n.input),value:n.value,output:copy(n.output),candidate:n.candidate===undefined?null:copy(n.candidate),active:n.active};}
 function view(n,ids){return ids.map(id=>record(n[id]));}
-function runSimulation(body,rawGraph,rawParams){
- const graph=validateGraph(rawGraph),IDS=graph.vertices,compute=compile(body),frames=[];
- const NEIGHBORS=Object.fromEntries(IDS.map(id=>[id,graph.edges.filter(e=>e[0]===id).map(e=>e[1]).sort((a,b)=>a-b)]));
+function runSimulation(body,rawGraph,rawParams,trustedCompute){
+ const graph=validateGraph(rawGraph),IDS=graph.vertices,compute=trustedCompute||compile(body),frames=[];
+ const NEIGHBORS=entriesObject(IDS.map(id=>[id,graph.edges.filter(e=>e[0]===id).map(e=>e[1]).sort((a,b)=>a-b)]));
  const params=Object.freeze(rawParams&&typeof rawParams==="object"&&!Array.isArray(rawParams)?{...rawParams}:{});
- const nodes=Object.fromEntries(IDS.map(id=>{
+ const nodes=entriesObject(IDS.map(id=>{
   const value=Number(graph.values[id-1]);
-  return [id,{id,input:[],value,output:[],current:null,next:null,active:true}];
+  return [id,{id,input:[],value,output:[],candidate:null,active:true}];
  }));
- let inbox=Object.fromEntries(IDS.map(id=>[id,[]])),totalMessages=0;
+ let inbox=entriesObject(IDS.map(id=>[id,[]])),totalMessages=0;
  function push(phase,ss,line,focus,states,flows=[],note=""){
   frames.push({phase,ss,line,focus,states:copy(states),flows:copy(flows),note});
   if(frames.length>4500)throw Error("履歴件数の上限に到達");
  }
  for(let ss=0;ss<18;ss++){
-  for(const id of IDS){const n=nodes[id];n.input=[];n.output=[];n.current=null;n.next=null;}
+  for(const id of IDS){const n=nodes[id];n.input=[];n.output=[];n.candidate=null;}
   const reactivated=IDS.filter(id=>!nodes[id].active&&inbox[id].length>0);
   const executing=IDS.filter(id=>nodes[id].active||inbox[id].length>0);
   for(const id of executing){nodes[id].input=copy(inbox[id]);if(nodes[id].input.length)nodes[id].active=true;}
   push("call",ss,0,executing,view(nodes,IDS),[],
     "Superstep "+ss+"：inputs を設定"+
     (reactivated.length?"／頂点 "+reactivated.join(", ")+" の isActive を false → true に変更（再活性化）":""));
-  for(const id of executing)nodes[id].current=nodes[id].value;
-  push("init-current",ss,0,executing,view(nodes,IDS),[],"let current = value：current を初期化");
-  for(const id of executing)nodes[id].next=undefined;
-  push("init-next",ss,0,executing,view(nodes,IDS),[],"let next：next を undefined で初期化");
-  const baseline=view(nodes,IDS),traces=Object.fromEntries(IDS.map(id=>[id,[]])),outbox=[];
+  const baseline=view(nodes,IDS),traces=entriesObject(IDS.map(id=>[id,[]])),outbox=[];
   let failure=null;
   for(const id of IDS){
    const n=nodes[id];if(!n.active)continue;
@@ -841,38 +923,39 @@ function runSimulation(body,rawGraph,rawParams){
     outDegree:NEIGHBORS[id].length,
     params,
     outNeighbors(){return NEIGHBORS[id].slice();},
-    setValue(x){if(typeof x!=="number"||!Number.isFinite(x)&&x!==Infinity)throw Error("setValue は有限の数値またはInfinityを指定");n.value=x;},
+    getValue(){return n.value;},
+     setValue(x){if(typeof x!=="number"||!Number.isFinite(x)&&x!==Infinity)throw Error("setValue は有限の数値またはInfinityを指定");n.value=x;},
     send(to,x){
      if(!IDS.includes(to))throw Error("宛先 "+to+" は存在しません");
-     if(!["number","string","boolean"].includes(typeof x)||typeof x==="number"&&!Number.isFinite(x))throw Error("送信値は数値・文字列・真偽値");
      if(outbox.length>=1200)throw Error("メッセージの上限に到達");
-     n.output.push({to,value:x});outbox.push({from:id,to,value:x});
+     const value=copyMessageValue(x);
+     n.output.push({to,value});outbox.push({from:id,to,value});
     },
     sendToNeighbors(x){for(const to of NEIGHBORS[id])this.send(to,x);},
     voteToHalt(){n.active=false;}
    };
-   const __trace=(line,current,next)=>({line,current,next});
-   function* __cond(condition,line,current,next){yield{line,current,next};return condition;}
+    const __trace=(line,candidate)=>({line,candidate});
+    function* __cond(condition,line,candidate){yield{line,candidate};return condition;}
    try{
-    const gen=compute(copy(n.input),n.value,api,__trace,__cond);
+    const gen=compute(copy(n.input),api,__trace,__cond);
     for(let k=0;;k++){
      if(k>=1100)throw Error("1頂点の最大実行文数（1100）超過");
      const p=gen.next();if(p.done)break;
      if(!p.value||typeof p.value.line!=="number")throw Error("追跡イベント異常");
-     n.current=p.value.current;n.next=p.value.next;traces[id].push({line:p.value.line,node:record(n)});
+     n.candidate=p.value.candidate;traces[id].push({line:p.value.line,node:record(n)});
     }
    }catch(e){
     const m=String(e.stack||"").match(/at compute \([^\n]*<anonymous>:(\d+):\d+\)/);
-    const at=m?Math.max(1,Number(m[1])-5):(traces[id].at(-1)?.line||0);
+    const at=m?Math.max(1,Number(m[1])-3):(traces[id].length?traces[id][traces[id].length-1].line:0);
     failure={id,message:e.message||String(e),line:at};break;}
   }
-  const shown=Object.fromEntries(baseline.map(x=>[x.id,x])),ptr=Object.fromEntries(IDS.map(id=>[id,0]));
+  const shown=entriesObject(baseline.map(x=>[x.id,x])),ptr=entriesObject(IDS.map(id=>[id,0]));
   while(IDS.some(id=>ptr[id]<traces[id].length)){
    const first=Math.min(...IDS.filter(id=>ptr[id]<traces[id].length).map(id=>traces[id][ptr[id]].line)),focus=[];
    for(const id of IDS)if(ptr[id]<traces[id].length&&traces[id][ptr[id]].line===first){
     shown[id]=copy(traces[id][ptr[id]].node);ptr[id]++;focus.push(id);
    }
-   push("line",ss,first,focus,IDS.map(id=>shown[id]),[],"行 "+first+"：頂点 "+focus.join(", ")+" を実行");
+   push("line",ss,first,focus,IDS.map(id=>shown[id]),[],"行 "+(first+1)+"：頂点 "+focus.join(", ")+" を実行");
   }
   if(failure){
    push("error",ss,failure.line,[failure.id],IDS.map(id=>shown[id]),[],"頂点 "+failure.id+"："+failure.message);
@@ -880,36 +963,128 @@ function runSimulation(body,rawGraph,rawParams){
   }
   const end=view(nodes,IDS);push("barrier",ss,0,[],end,[],"Superstep "+ss+" のCompute完了");totalMessages+=outbox.length;
   if(IDS.every(id=>!nodes[id].active)&&outbox.length===0){
-   push("done",ss,0,[],end,[],"全頂点Inactiveかつ未配送なし：計算終了");
+   push("done",ss,0,[],end,[],"全頂点Haltedかつ未配送なし：計算終了");
    return{frames,complete:true,totalMessages};
   }
   push("delivery",ss,0,[],end,outbox,"同期境界：送信予約 "+outbox.length+" 件を次のSuperstepへ配送");
-  inbox=Object.fromEntries(IDS.map(id=>[id,[]]));for(const m of outbox)inbox[m.to].push(m.value);
+  inbox=entriesObject(IDS.map(id=>[id,[]]));for(const m of outbox)inbox[m.to].push(m.value);
  }
  push("limit",18,0,[],view(nodes,IDS),[],"Superstep上限に到達");
  return{frames,error:"Superstep上限に到達"};
 }
-self.onmessage=e=>{
- if(!e.data||e.data.type!=="run")return;
- try{self.postMessage({type:"result",token:e.data.token,...runSimulation(e.data.body,e.data.graph,e.data.params)});}
- catch(err){self.postMessage({type:"error",token:e.data.token,message:err.message||String(err)});}
+function trustedBuiltin(body){
+if(body==="candidate = Math.min(...inputs);\nif (api.getValue() == -1) {\n  api.setValue(0);\n  api.sendToNeighbors(1);\n} else if (candidate < api.getValue()) {\n  api.setValue(candidate);\n  api.sendToNeighbors(api.getValue() + 1);\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+candidate = Math.min(...inputs); yield __trace(2,__observe());
+if (yield* __cond((api.getValue() == -1),3,__observe())) {
+  api.setValue(0); yield __trace(4,__observe());
+  api.sendToNeighbors(1); yield __trace(5,__observe());
+} else if (yield* __cond((candidate < api.getValue()),6,__observe())) {
+  api.setValue(candidate); yield __trace(7,__observe());
+  api.sendToNeighbors(api.getValue() + 1); yield __trace(8,__observe());
+}
+api.voteToHalt(); yield __trace(10,__observe());
 };
+if(body==="candidate = Math.max(api.getValue(), ...inputs);\nif (api.superstep === 0 || candidate > api.getValue()) {\n  api.setValue(candidate);\n  api.sendToNeighbors(api.getValue());\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+candidate = Math.max(api.getValue(), ...inputs); yield __trace(2,__observe());
+if (yield* __cond((api.superstep === 0 || candidate > api.getValue()),3,__observe())) {
+  api.setValue(candidate); yield __trace(4,__observe());
+  api.sendToNeighbors(api.getValue()); yield __trace(5,__observe());
+}
+api.voteToHalt(); yield __trace(7,__observe());
+};
+if(body==="if (api.superstep > 0) {\n  candidate = (1 - 0.85) / api.vertexCount;\n  for (const received of inputs) {\n    candidate += 0.85 * received;\n  }\n  api.setValue(candidate);\n}\nif (api.superstep < 6 && api.outDegree > 0) {\n  api.sendToNeighbors(api.getValue() / api.outDegree);\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+if (yield* __cond((api.superstep > 0),2,__observe())) {
+  candidate = (1 - 0.85) / api.vertexCount; yield __trace(3,__observe());
+  for (const received of inputs) {
+    candidate += 0.85 * received; yield __trace(5,__observe());
+  }
+  api.setValue(candidate); yield __trace(7,__observe());
+}
+if (yield* __cond((api.superstep < 6 && api.outDegree > 0),9,__observe())) {
+  api.sendToNeighbors(api.getValue() / api.outDegree); yield __trace(10,__observe());
+}
+api.voteToHalt(); yield __trace(12,__observe());
+};
+if(body==="candidate = api.getValue();\nif (candidate === 2 && inputs.includes(1)) {\n  api.setValue(3);\n} else if (candidate === 0 && inputs.includes(1)) {\n  api.setValue(1);\n  api.sendToNeighbors(1);\n} else if (api.superstep === 0 && candidate === 1) {\n  api.sendToNeighbors(1);\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+candidate = api.getValue(); yield __trace(2,__observe());
+if (yield* __cond((candidate === 2 && inputs.includes(1)),3,__observe())) {
+  api.setValue(3); yield __trace(4,__observe());
+} else if (yield* __cond((candidate === 0 && inputs.includes(1)),5,__observe())) {
+  api.setValue(1); yield __trace(6,__observe());
+  api.sendToNeighbors(1); yield __trace(7,__observe());
+} else if (yield* __cond((api.superstep === 0 && candidate === 1),8,__observe())) {
+  api.sendToNeighbors(1); yield __trace(9,__observe());
+}
+api.voteToHalt(); yield __trace(11,__observe());
+};
+if(body==="candidate = api.getValue();\nfor (const received of inputs) {\n  candidate = candidate | received;\n}\nif ((api.superstep === 0 && candidate > 0) || candidate !== api.getValue()) {\n  api.setValue(candidate);\n  api.sendToNeighbors(api.getValue());\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+candidate = api.getValue(); yield __trace(2,__observe());
+for (const received of inputs) {
+  candidate = candidate | received; yield __trace(4,__observe());
+}
+if (yield* __cond(((api.superstep === 0 && candidate > 0) || candidate !== api.getValue()),6,__observe())) {
+  api.setValue(candidate); yield __trace(7,__observe());
+  api.sendToNeighbors(api.getValue()); yield __trace(8,__observe());
+}
+api.voteToHalt(); yield __trace(10,__observe());
+};
+if(body==="const myNeighbors = api.outNeighbors();\nif (api.superstep === 0) {\n  api.sendToNeighbors(myNeighbors);\n} else {\n  candidate = 0;\n  for (const receivedNeighbors of inputs) {\n    for (const neighbor of myNeighbors) {\n      if (receivedNeighbors.includes(neighbor)) {\n        candidate = 1;\n      }\n    }\n  }\n  api.setValue(candidate);\n}\napi.voteToHalt();")return function* compute(inputs,api,__trace,__cond){
+let candidate; const __observe=()=>candidate; yield __trace(1,candidate);
+const myNeighbors = api.outNeighbors(); yield __trace(2,__observe());
+if (yield* __cond((api.superstep === 0),3,__observe())) {
+  api.sendToNeighbors(myNeighbors); yield __trace(4,__observe());
+} else {
+  candidate = 0; yield __trace(6,__observe());
+  for (const receivedNeighbors of inputs) {
+    for (const neighbor of myNeighbors) {
+      if (yield* __cond((receivedNeighbors.includes(neighbor)),9,__observe())) {
+        candidate = 1; yield __trace(10,__observe());
+      }
+    }
+  }
+  api.setValue(candidate); yield __trace(14,__observe());
+}
+api.voteToHalt(); yield __trace(16,__observe());
+};
+return null;
+}
+if(typeof document==="undefined"){
+ self.onmessage=e=>{
+  if(!e.data||e.data.type!=="run")return;
+  try{self.postMessage({type:"result",token:e.data.token,...runSimulation(e.data.body,e.data.graph,e.data.params,trustedBuiltin(e.data.body))});}
+  catch(err){self.postMessage({type:"error",token:e.data.token,message:err.message||String(err)});}
+ };
+ self.postMessage({type:"ready"});
+}else{
+ // Only exact, precompiled built-in source is accepted on the UI thread.
+ window.takezonoBuiltinSimulation=function(body,graph,params){
+  const compute=trustedBuiltin(body);
+  if(!compute)return null;
+  return runSimulation(body,graph,params,compute);
+ };
+}
 
+})();
 </script>
 <script>
 "use strict";
 (function(){
 /* graph-model-start */
 const DEFAULT_GRAPH={vertices:[1,2,3,4,5,6],edges:[[1,2],[1,4],[2,3],[3,4],[4,2],[4,5],[6,5]]};
-function defaultValues(g,start=1){return g.vertices.map(id=>id===start?0:"Infinity");}
+function defaultValues(g,start=1){return g.vertices.map(id=>id===start?-1:"Infinity");}
 function validInitialValue(v){return v==="Infinity"||typeof v==="number"&&Number.isFinite(v);}
-function initialValue(g,id){return Number(g.values?.[id-1]??(id===1?0:"Infinity"));}
+function initialValue(g,id){return Number(g.values&&g.values[id-1]!=null?g.values[id-1]:(id===1?-1:"Infinity"));}
 function clone(g){return{vertices:g.vertices.slice(),edges:g.edges.map(e=>e.slice()),values:g.values?g.values.slice():defaultValues(g)};}
 function ssspStart(g){
- const zero=g.vertices.filter(id=>initialValue(g,id)===0);
+ const zero=g.vertices.filter(id=>initialValue(g,id)===-1);
  return zero.length===1&&g.vertices.every(id=>id===zero[0]||initialValue(g,id)===Infinity)?zero[0]:null;
 }
-const SSSP_ERROR="実行できません。①で1つの頂点の初期valueを0、残りを∞に設定してください。";
+const SSSP_ERROR="実行できません。①で1つの頂点の初期valueを−1、残りを∞に設定してください。";
 function validate(g){
  if(!g||!Array.isArray(g.vertices)||!Array.isArray(g.edges)||g.vertices.length<2||g.vertices.length>12||g.vertices.some((v,i)=>v!==i+1))throw Error("頂点数は2〜12です");
  if(g.values!==undefined&&(!Array.isArray(g.values)||g.values.length!==g.vertices.length||g.values.some(v=>!validInitialValue(v))))throw Error("初期valueが不正です");
@@ -957,7 +1132,7 @@ function resize(g,n){
  if(!Number.isInteger(n)||n<2||n>12)throw Error("頂点数は2〜12です");
  const old=g.values||defaultValues(g);
  g.vertices=Array.from({length:n},(_,i)=>i+1);
- g.values=g.vertices.map(id=>old[id-1]??"Infinity");
+ g.values=g.vertices.map(id=>old[id-1]==null?"Infinity":old[id-1]);
  g.edges=g.edges.filter(e=>e[0]<=n&&e[1]<=n);
 }
 function incoming(g,id){return g.edges.filter(e=>e[1]===id).map(e=>e[0]).sort((a,b)=>a-b);}
@@ -994,71 +1169,88 @@ function cyclesThrough(g,start,limit=5){
 }
 // SSSP with unit-weight edges: DFS-order sequential relaxation.
 // input is one distance candidate; value is stored locally at each vertex.
-function dfsCompute(input,value,api){
- if(input == 0 && value == 0){
+function dfsCompute(input,api,observe=()=>{}){
+ let candidate;
+ observe(2,candidate);
+ candidate=input;
+ observe(3,candidate);
+ observe(4,candidate);
+ if(api.getValue() == -1){
+  api.setValue(0);
   api.exploreNeighbors(1);
- }else if(input < value){
-  api.setValue(input);
-  api.exploreNeighbors(input+1);
+ }else{
+  observe(7,candidate);
+  if(candidate < api.getValue()){
+   api.setValue(candidate);
+   api.exploreNeighbors(api.getValue()+1);
+  }
  }
 }
 function dfsFrames(g,start){
  validate(g);if(ssspStart(g)!==start||start===null)throw Error(SSSP_ERROR);
- const local=new Map(g.vertices.map(id=>[id,{input:null,value:initialValue(g,id)}]));
+ const local=new Map(g.vertices.map(id=>[id,{input:null,value:initialValue(g,id),output:[],candidate:null}]));
  const checked=new Set(),order=[],stack=[];
- function snapshot(){return Object.fromEntries([...local].map(([id,state])=>[id,{...state}]));}
+ function snapshot(){return entriesObject([...local].map(([id,state])=>[id,{...state,output:state.output.map(m=>({...m}))}]));}
  const frames=[{type:"initial",line:0,stack:[],visited:[],nodeStates:snapshot(),current:null,move:null,
-  inspected:[],checked:0,edgeTotal:g.edges.length,note:"実行モデル：開始頂点"+start+"の距離候補0からDFS順に探索します。"}];
+  inspected:[],checked:0,edgeTotal:g.edges.length,note:"実行モデル：開始頂点"+start+"（初期value = −1）からDFS順に探索します。"}];
  function save(type,line,note,move=null,current=null){
   frames.push({type,line,stack:stack.slice(),visited:order.slice(),nodeStates:snapshot(),
-   current:current===null?(stack.at(-1)??null):current,move,
+   current:current===null?(stack.length?stack[stack.length-1]:null):current,move,
    inspected:[...checked],checked:checked.size,edgeTotal:g.edges.length,note});
  }
  function visit(v,input){
   const node=local.get(v),previous=node.value,first=!order.includes(v);
-  node.input=input;
+  // Each recursive call owns its input, candidate and output. value belongs to the vertex.
+  const invocation={input,output:[],candidate:null};
+  const showInvocation=()=>Object.assign(node,invocation);
+  showInvocation();
   if(first)order.push(v);
-  // Keep the arrival edge in the active path while Compute runs.
   stack.push(v);
-  const tag=first?"":"-revisit";
-  save("call"+tag,1,"実行モデル：頂点"+v+"へ距離候補"+input+"を渡し、Computeを呼び出します。",null,v);
-  save("condition"+tag,2,"Compute：開始頂点の初回処理かを判定します。",null,v);
-  const source=input == 0 && previous == 0;
-  if(!source)save("condition"+tag,4,"Compute：距離候補"+input+"が保存値"+(Number.isFinite(previous)?previous:"∞")+"より短いか判定します。",null,v);
-  let candidate=null;
-  dfsCompute(input,previous,{
+  const tag=first?"":"-revisit",source=previous == -1;
+  save("call"+tag,1,input===null?"実行モデル：開始頂点"+v+"のComputeを呼び出します（受信データなし）。":"実行モデル：頂点"+v+"へ距離候補"+input+"を渡し、Computeを呼び出します。",null,v);
+  let exploreRequested=false;
+  dfsCompute(input,{
+   getValue(){return node.value;},
    setValue(next){
     node.value=next;
-    save("update"+tag,5,"Compute：頂点"+v+"の最短距離候補を"+next+"に更新しました。",null,v);
+    save("update"+tag,source?5:8,"Compute：頂点"+v+"の最短距離候補を"+next+"に更新しました。",null,v);
    },
    exploreNeighbors(next){
-    candidate=next;
-    save("expand"+tag,source?3:6,"Compute：隣接頂点へ距離候補"+next+"を渡すよう探索モデルに依頼します。",null,v);
+    exploreRequested=true;
+    invocation.output=outgoing(g,v).map(to=>({to,value:next}));
+    showInvocation();
+    save("expand"+tag,source?6:9,"Compute：隣接頂点へ距離候補"+next+"を渡すようDFS実行モデルに依頼します。",null,v);
    }
+  },(line,candidate)=>{
+   invocation.candidate=candidate==null?null:candidate;showInvocation();
+   if(line===2)save("declare"+tag,line,"Compute：更新候補candidateを宣言します。",null,v);
+   else if(line===3)save("candidate"+tag,line,"Compute：受け取ったinputをcandidateに格納します。",null,v);
+   else if(line===4)save("condition"+tag,line,"Compute：開始頂点の初回処理かを判定します。",null,v);
+   else if(line===7)save("condition"+tag,line,"Compute：更新候補"+candidate+"が保存値"+(Number.isFinite(previous)?previous:"∞")+"より短いか判定します。",null,v);
   });
   save("complete"+tag,0,"実行モデル：頂点"+v+"のComputeが終了しました。",null,v);
-  if(candidate===null){
+  if(!exploreRequested){
    save("skip-revisit",0,"実行モデル：距離が改善されなかったため、頂点"+v+"からの再探索は行いません。",null,v);
-   stack.pop();
-   return;
+   stack.pop();return;
   }
-  for(const to of outgoing(g,v)){
+  // Iterate this call's output, not the mutable view of the vertex.
+  for(const {to,value} of invocation.output){
    save("edge",0,"実行モデル：頂点"+v+"→"+to+"の辺（重み1）を調べます。",null,v);
    checked.add(v+":"+to);
-   save("descend",0,"実行モデル：頂点"+to+"へ距離候補"+candidate+"を渡します。",
-    {from:v,to,kind:"forward"},v);
-   visit(to,candidate);
-   // The parent alone records the return after a child's Compute/exploration.
+   save("descend",0,"実行モデル：頂点"+to+"へ距離候補"+value+"を渡します。",
+    {from:v,to,kind:"forward",value},v);
+   visit(to,value);
+   // A cycle can revisit the same vertex. Restore the suspended call's I/O,
+   // but never roll back the vertex's persistent value.
+   showInvocation();
    save("backtrack",0,"実行モデル：頂点"+to+"から頂点"+v+"へ戻り、次の辺を調べます。",
     {from:to,to:v,kind:"return"},v);
   }
   save("return",0,"実行モデル：頂点"+v+"での隣接頂点の確認が終わりました。",null,v);
   stack.pop();
-  if(!stack.length){
-   save("component-end",0,"実行モデル：開始頂点から伝えられる距離候補をすべて調べました。");
-  }
+  if(!stack.length)save("component-end",0,"実行モデル：開始頂点から伝えられる距離候補をすべて調べました。");
  }
- visit(start,0);
+ visit(start,null);
  save("done",0,"SSSPの計算が終了しました。開始頂点"+start+"からの距離："+g.vertices.map(id=>
   id+"="+(Number.isFinite(local.get(id).value)?local.get(id).value:"∞")).join("、")+"。");
  return frames;
@@ -1069,11 +1261,11 @@ function pregelFrames(g,start){
  validate(g);if(ssspStart(g)!==start||start===null)throw Error(SSSP_ERROR);
  const ids=g.vertices.slice().sort((a,b)=>a-b),values=new Map(ids.map(id=>[id,initialValue(g,id)]));
  const emptyIO=()=>new Map(ids.map(id=>[id,[]]));
- let active=new Set(ids),inputById=emptyIO(),outputById=emptyIO(),inbox=[],step=0;
+ let active=new Set(ids),inputById=emptyIO(),outputById=emptyIO(),candidates=new Map(),inbox=[],step=0;
  const frames=[];
  function snapshot(){
   return ids.map(id=>({id,active:active.has(id),value:values.get(id),
-   input:inputById.get(id).slice(),output:outputById.get(id).map(m=>({...m}))}));
+   input:inputById.get(id).slice(),output:outputById.get(id).map(m=>({...m})),candidate:candidates.has(id)?candidates.get(id):null}));
  }
  function push(phase,ss,line,focus,note,incoming=[],sent=[]){
   frames.push({phase,superstep:ss,line,focus:focus.slice(),states:snapshot(),
@@ -1081,7 +1273,7 @@ function pregelFrames(g,start){
  }
  while(true){
   const executing=step===0?ids.slice():[...new Set(inbox.map(m=>m.to))].sort((a,b)=>a-b);
-  active=new Set(executing);inputById=emptyIO();outputById=emptyIO();
+  active=new Set(executing);inputById=emptyIO();outputById=emptyIO();candidates=new Map();
   for(const m of inbox)inputById.get(m.to).push(m.value);
   push("call",step,1,executing,
    step===0?"SS0：全頂点が①で設定した初期valueと空のinputsでComputeを始めます。":
@@ -1090,10 +1282,11 @@ function pregelFrames(g,start){
    push("done",step,0,[],"すべての頂点がHaltedで未配送メッセージもありません。終了です。",inbox);
    break;
   }
-  const candidates=new Map(executing.map(id=>[id,Math.min(...inputById.get(id))]));
-  push("line",step,2,executing,"SS"+step+"／2行目：受信したinputsの最小値nextを計算します。",inbox);
-  push("line",step,3,executing,"SS"+step+"／3行目：SS0でvalueが0の開始頂点かを判定します。",inbox);
-  const sources=executing.filter(id=>step == 0 && values.get(id) == 0);
+  push("line",step,2,executing,"SS"+step+"／2行目：更新候補candidateを宣言します。",inbox);
+   candidates=new Map(executing.map(id=>[id,Math.min(...inputById.get(id))]));
+  push("line",step,3,executing,"SS"+step+"／3行目：受信したinputsの最小値candidateを計算します。",inbox);
+  push("line",step,4,executing,"SS"+step+"／4行目：valueが−1の初期化前の開始頂点かを判定します。",inbox);
+  const sources=executing.filter(id=>values.get(id) == -1);
   const others=executing.filter(id=>!sources.includes(id));
   const sent=[];
   const send=(id,distance)=>{
@@ -1102,19 +1295,21 @@ function pregelFrames(g,start){
    }
   };
   if(sources.length){
-   for(const id of sources)send(id,1);
-   push("line",step,4,sources,"SS"+step+"／4行目：開始頂点から距離候補1を送信予約します。",inbox,sent);
+   for(const id of sources)values.set(id,0);
+    push("line",step,5,sources,"SS"+step+"／5行目：開始頂点の距離を0に更新します。",inbox,sent);
+    for(const id of sources)send(id,1);
+   push("line",step,6,sources,"SS"+step+"／6行目：開始頂点から距離候補1を送信予約します。",inbox,sent);
   }
-  if(others.length)push("line",step,5,others,"SS"+step+"／5行目：nextがvalueより小さいか判定します。",inbox,sent);
+  if(others.length)push("line",step,7,others,"SS"+step+"／7行目：candidateがvalueより小さいか判定します。",inbox,sent);
   const improved=others.filter(id=>candidates.get(id)<values.get(id));
   if(improved.length){
    for(const id of improved)values.set(id,candidates.get(id));
-   push("line",step,6,improved,"SS"+step+"／6行目：頂点 "+improved.join("、")+" の距離を更新します。",inbox,sent);
-   for(const id of improved)send(id,candidates.get(id)+1);
-   push("line",step,7,improved,"SS"+step+"／7行目：更新した距離に1を加えて送信予約します。",inbox,sent);
+   push("line",step,8,improved,"SS"+step+"／8行目：頂点 "+improved.join("、")+" の距離を更新します。",inbox,sent);
+   for(const id of improved)send(id,values.get(id)+1);
+   push("line",step,9,improved,"SS"+step+"／9行目：更新した距離に1を加えて送信予約します。",inbox,sent);
   }
   for(const id of executing)active.delete(id);
-  push("line",step,9,executing,"SS"+step+"／9行目：実行した頂点がvoteToHalt()を呼びました。",inbox,sent);
+  push("line",step,11,executing,"SS"+step+"／11行目：実行した頂点がvoteToHalt()を呼びました。",inbox,sent);
   push("barrier",step,0,[],"SS"+step+"のComputeが終了しました。送信予約をまとめます。",inbox,sent);
   if(!sent.length){
    push("done",step,0,[],"SSSPの計算終了。開始頂点"+start+"からの距離："+ids.map(id=>
@@ -1128,6 +1323,8 @@ function pregelFrames(g,start){
  return frames;
 }
 /* graph-model-end */
+function entriesObject(entries){const result={};for(const pair of entries)Object.defineProperty(result,pair[0],{value:pair[1],enumerable:true,writable:true,configurable:true});return result;}
+function replaceChildrenCompat(parent,...children){while(parent.firstChild)parent.removeChild(parent.firstChild);for(const child of children)parent.appendChild(child);}
 const $=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg";
 const distanceText=n=>Number.isFinite(n)?String(n):"∞";
 function initialDisplay(v){return v===Infinity||v==="Infinity"?"∞":Number.isInteger(Number(v))?String(Number(v)):String(Number(Number(v).toPrecision(6)));}
@@ -1154,7 +1351,7 @@ function renderInitialValues(){
   input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();input.blur();}});
   row.append(label,input);frag.appendChild(row);
  }
- list.replaceChildren(frag);
+ replaceChildrenCompat(list,frag);
  const source=ssspStart(graph);
  $("initial-values-status").textContent=source===null?"②・④のSSSPは現在の初期値では実行できません。":"SSSP実行可能：開始頂点 "+source;
 }
@@ -1162,7 +1359,7 @@ function bulkInitialValues(){
  const choice=$("initial-values-preset").value;
  let values;try{
   const custom=choice==="custom"?parseInitialValue($("initial-values-custom").value):0;
-  values=graph.vertices.map(id=>choice==="sssp"?(id===1?0:"Infinity"):choice==="zero"?0:choice==="infinity"?"Infinity":choice==="id"?id:choice==="rank"?1/graph.vertices.length:custom);
+  values=graph.vertices.map(id=>choice==="sssp"?(id===1?-1:"Infinity"):choice==="zero"?0:choice==="infinity"?"Infinity":choice==="id"?id:choice==="rank"?1/graph.vertices.length:custom);
  }catch(e){$("initial-values-status").textContent=e.message;return;}
  if(values.every((v,i)=>v===graph.values[i]))return;
  if(!prepareGraphEdit4())return;
@@ -1178,6 +1375,7 @@ function graphFitScale(stage){
 function updateGraphZoom(stage){
  const box=$("graph-view"+stage),svg=$("graph"+stage),v=svg.viewBox.baseVal,settings=graphZoom[stage];
  if(!box||box.clientWidth===0||!v.width||!v.height)return;
+ if(!("aspectRatio" in box.style))box.style.height=box.offsetWidth+"px";
  const scale=settings.mode==="fit"?graphFitScale(stage):settings.scale;
  svg.style.width=Math.round(v.width*scale)+"px";
  svg.style.height=Math.round(v.height*scale)+"px";
@@ -1225,7 +1423,7 @@ function draw(stage,animateMove=false){
    "data-edge":a+":"+b,stroke:highlight?"#155c86":"#aab7c0","stroke-width":highlight?3:2,
    "marker-end":graphMode==="undirected"?"none":"url(#"+(highlight?"arrow1-active":"arrow1")+")"}));
  }
- $("edge-layer1").replaceChildren(edges);
+ replaceChildrenCompat($("edge-layer1"),edges);
  const nodes=document.createDocumentFragment();
  for(const id of graph.vertices){
   const at=p.get(id),g=element("g",{class:"graph-vertex",tabindex:0,role:"button","aria-pressed":String(id===selectedVertex),
@@ -1233,7 +1431,7 @@ function draw(stage,animateMove=false){
   g.addEventListener("click",()=>selectVertex(id));
   g.addEventListener("keydown",ev=>{
    if(ev.key!=="Enter"&&ev.key!==" ")return;ev.preventDefault();selectVertex(id);
-   for(const child of $("vertex-layer1").children)if(child.getAttribute("aria-label")?.startsWith("頂点"+id+"。")){child.focus();break;}
+   for(const child of $("vertex-layer1").children)if((child.getAttribute("aria-label")||"").startsWith("頂点"+id+"。")){child.focus();break;}
   });
   g.appendChild(element("circle",{class:"node-circle",cx:at.x,cy:at.y,r:25}));
   const t=element("text",{x:at.x,y:at.y-7});t.textContent=String(id);g.appendChild(t);
@@ -1241,17 +1439,18 @@ function draw(stage,animateMove=false){
   val.textContent=initialDisplay(initialValue(graph,id));g.appendChild(val);
   const tip=element("title",{});tip.textContent="頂点"+id+"：初期value="+initialDisplay(initialValue(graph,id));g.appendChild(tip);nodes.appendChild(g);
  }
- $("vertex-layer1").replaceChildren(nodes);
+ replaceChildrenCompat($("vertex-layer1"),nodes);
  $("count1").textContent=graph.vertices.length+"頂点・"+(graphMode==="undirected"?pairs(graph).length+"無向辺":graph.edges.length+"有向辺");
  updateGraphZoom(1);
  const ins=incoming(graph,selectedVertex),outs=outgoing(graph,selectedVertex),strong=document.createElement("strong");
  strong.textContent="頂点"+selectedVertex+"　初期value："+initialDisplay(initialValue(graph,selectedVertex));
- $("vertex-info").replaceChildren(strong);
+ replaceChildrenCompat($("vertex-info"),strong);
  const lines=graphMode==="undirected"?["隣接頂点： "+(outs.join("、")||"なし")+"（次数 "+outs.length+"）"]:["出辺 → "+(outs.join("、")||"なし")+"（出次数 "+outs.length+"）","入辺 ← "+(ins.join("、")||"なし")+"（入次数 "+ins.length+"）"];
  for(const line of lines){const row=document.createElement("div");row.className="graph-detail-row";row.textContent=line;$("vertex-info").appendChild(row);}
 }
-const EXEC_CARD={width:148,height:102,gap:14};
-const PREGEL_CARD={width:174,height:128,gap:14};
+const RUN_CARD_GEOMETRY={width:174,gap:14,radius:8,headerY:21,dividerY:30,rowY:46,rowPitch:21,valueX:73,padding:8};
+const EXEC_CARD={width:RUN_CARD_GEOMETRY.width,height:128,gap:RUN_CARD_GEOMETRY.gap};
+const PREGEL_CARD=EXEC_CARD;
 function squareCardLayout(vertices,rect,initialRadius=210){
  const n=vertices.length,angle=i=>-Math.PI/2+2*Math.PI*i/n;
  let radius=initialRadius;
@@ -1268,7 +1467,7 @@ function squareCardLayout(vertices,rect,initialRadius=210){
  return{p,width:side,height:side,rect};
 }
 function cardLayout(stage=2){
- return squareCardLayout(graph.vertices,stage===3?PREGEL_CARD:EXEC_CARD);
+ return squareCardLayout(graph.vertices,EXEC_CARD);
 }
 function borderPoint(a,b,rect=EXEC_CARD){
  const dx=b.x-a.x,dy=b.y-a.y,halfW=rect.width/2,halfH=rect.height/2;
@@ -1281,10 +1480,70 @@ function svgText(parent,x,y,value,attrs={}){
 }
 // DFS has four visual states; first/revisit/return describes the current
 // vertex's transition, not a separate permanent color.
+// Shared compact card geometry for both Pregel pages.
+function pregelCardValueText(value,maxWidth,measure){
+ if(measure(value)<=maxWidth)return value;
+ const chars=Array.from(value);
+ let low=0,high=chars.length;
+ while(low<high){
+  const mid=Math.ceil((low+high)/2);
+  if(measure(chars.slice(0,mid).join("")+"…")<=maxWidth)low=mid;else high=mid-1;
+ }
+ return chars.slice(0,low).join("")+"…";
+}
+let pregelCardMeasureContext;
+function measureCardText(value,fontSize=12,fontWeight=650){
+ if(pregelCardMeasureContext===undefined){
+  pregelCardMeasureContext=document.createElement("canvas").getContext("2d");
+ }
+ if(pregelCardMeasureContext){
+  pregelCardMeasureContext.font=fontWeight+" "+fontSize+'px system-ui,-apple-system,"Yu Gothic",Meiryo,sans-serif';
+  return pregelCardMeasureContext.measureText(value).width;
+ }
+ return Array.from(value).length*fontSize;
+}
+// State is selected by each execution model; visual geometry is shared.
+function runEdgeStyle(hot,seen,marker){
+ return {stroke:hot?"#155c86":seen?"#9bc2dc":"#aab7c0",
+  "stroke-width":hot?3:seen?2.5:2,"stroke-linecap":"round","marker-end":marker};
+}
+function drawRunCardFrame(parent,bx,by,rect,id,{fill,stroke,focused=false,path=false,dark=false,status="",dot=null}){
+ const d=RUN_CARD_GEOMETRY;
+ parent.appendChild(element("rect",{x:bx,y:by,width:rect.width,height:rect.height,rx:d.radius,
+  fill,stroke,"stroke-width":focused?3:path?2.5:1.5}));
+ svgText(parent,bx+10,by+d.headerY,"頂点 "+id,{class:"run-vertex-label"});
+ if(status){
+  const right=bx+rect.width-d.padding;
+  if(dot!==null)parent.appendChild(element("circle",{cx:right-measureCardText(status)-10,cy:by+17,r:5,fill:dot,"data-is-active":String(status==="Active")}));
+  svgText(parent,right,by+d.headerY,status,{class:"run-card-status"+(dark?" current-action":""),"text-anchor":"end"});
+ }
+ parent.appendChild(element("line",{x1:bx+d.padding,x2:bx+rect.width-d.padding,
+  y1:by+d.dividerY,y2:by+d.dividerY,stroke:dark?"#9ac2dc":"#d2dae0","stroke-width":1}));
+}
+function formatRunOutput(output,format=distanceText){return output.length?output.map(m=>m.to+":"+format(m.value)).join(", "):"—";}
+function drawRunCardRows(parent,bx,by,rect,rows,before=null){
+ const d=RUN_CARD_GEOMETRY;
+ rows.forEach(([label,value],i)=>{
+  const y=by+d.rowY+i*d.rowPitch+(i===3?5:0),changed=before!=null&&before[i]!==value;
+  if(i===3)parent.appendChild(element("line",{x1:bx+d.padding,x2:bx+rect.width-d.padding,y1:y-16,y2:y-16,stroke:"#d2dae0","stroke-width":1}));
+  if(changed)parent.appendChild(element("rect",{x:bx+d.valueX-3,y:y-14,width:rect.width-d.valueX+3-d.padding,height:18,rx:2,fill:"#e5edf2"}));
+  svgText(parent,bx+9,y,label,{class:"run-row-label"});
+  svgText(parent,bx+d.valueX,y,pregelCardValueText(value,rect.width-d.valueX-d.padding,measureCardText),
+   {class:"run-row-value"+(changed?" updated":"")});
+ });
+}
+function drawRunMotionDot(from,label,attrs={}){
+ const dot=element("g",{class:"motion-dot",transform:"translate("+from.x+" "+from.y+")",...attrs});
+ const radius=Math.min(38,Math.max(15,Math.ceil(measureCardText(label,12,700)/2)+5));
+ dot.appendChild(element("circle",{cx:0,cy:0,r:radius}));
+ svgText(dot,0,0,pregelCardValueText(label,radius*2-8,value=>measureCardText(value,12,700)));
+ const title=element("title",{});title.textContent=label;dot.appendChild(title);
+ return dot;
+}
 function currentAction(f){
  if(!f)return null;
- if(["call","condition","update","expand","complete"].includes(f.type))return"first";
- if(["call-revisit","condition-revisit","update-revisit","expand-revisit","complete-revisit","skip-revisit"].includes(f.type))return"revisit";
+ if(["call","declare","candidate","condition","update","expand","complete"].includes(f.type))return"first";
+ if(["call-revisit","declare-revisit","candidate-revisit","condition-revisit","update-revisit","expand-revisit","complete-revisit","skip-revisit"].includes(f.type))return"revisit";
  if(f.type==="backtrack"||f.type==="check-return")return"return";
  return null;
 }
@@ -1320,12 +1579,12 @@ function drawExecution(stage){
 
  $("count"+stage).textContent=graph.vertices.length+"頂点・"+(graphMode==="undirected"?pairs(graph).length+"無向辺":graph.edges.length+"有向辺");
  const edgeFrag=document.createDocumentFragment(),cardFrag=document.createDocumentFragment();
- const inspected=new Set(stage===2?f?.inspected||[]:[]),pathEdges=new Set();
+ const inspected=new Set(stage===2?(f&&f.inspected)||[]:[]),pathEdges=new Set();
  if(stage===2&&f){
   for(let i=1;i<f.stack.length;i++)pathEdges.add(f.stack[i-1]+":"+f.stack[i]);
   if((f.type==="check"||f.type==="descend")&&f.move)pathEdges.add(f.move.from+":"+f.move.to);
  }
- const sent=stage===3&&(f?.phase==="line"&&(f?.line===4||f?.line===7)||f?.phase==="delivery")?f.sent:[];
+ const sent=stage===3&&((f&&f.phase)==="line"&&((f&&f.line)===6||(f&&f.line)===9)||(f&&f.phase)==="delivery")?f.sent:[];
  const highlightedEdges=new Set(sent.map(m=>m.from+":"+m.to));
  const drawn=new Set();
  for(const [a,b] of graph.edges){
@@ -1340,67 +1599,46 @@ function drawExecution(stage){
   edgeFrag.appendChild(element("line",{
    x1:seg.from.x,y1:seg.from.y,x2:seg.to.x,y2:seg.to.y,
    "data-edge":key,"data-state":hot?"active":seen?"seen":"unseen",
-   stroke:hot?"#155c86":seen?"#9bc2dc":"#aab7c0",
-   "stroke-width":hot?4.4:2.3,
-   "marker-end":graphMode==="undirected"?"none":"url(#"+marker+")"}));
+   ...runEdgeStyle(hot,seen,graphMode==="undirected"?"none":"url(#"+marker+")")}));
  }
- $("edge-layer"+stage).replaceChildren(edgeFrag);
+ replaceChildrenCompat($("edge-layer"+stage),edgeFrag);
  for(const id of graph.vertices){
   const at=p.get(id),bx=at.x-rect.width/2,by=at.y-rect.height/2;
   if(stage===3){
-   const node=f?.states.find(x=>x.id===id)||{id,active:false,input:[],value:Infinity,output:[]};
-   const hot=(f?.focus||[]).includes(id),color=node.active?"#eef3f6":"#f4f6f7";
+   const node=(f&&f.states||[]).find(x=>x.id===id)||{id,active:false,input:[],value:Infinity,output:[]};
+   const hot=((f&&f.focus)||[]).includes(id),color=node.active?"#eef3f6":"#f4f6f7";
    const grp=element("g",{"data-node-id":id,"data-node-state":node.active?"active":"halted",
     "data-code-focus":String(hot),role:"presentation",class:"run-card"});
-   grp.appendChild(element("rect",{x:bx,y:by,width:rect.width,height:rect.height,rx:6,
-    fill:color,stroke:hot?"#155c86":node.active?"#9bb8ca":"#c4cdd3",
-    "stroke-width":hot?3.4:1.5}));
-   svgText(grp,bx+10,by+21,"頂点 "+id,{class:"run-vertex-label"});
-   grp.appendChild(element("circle",{cx:bx+109,cy:by+17,r:5,fill:node.active?"#155c86":"#aab7c0",
-    "data-is-active":String(node.active)}));
-   svgText(grp,bx+119,by+21,node.active?"Active":"Halted",{"font-size":12,fill:"#26333d","font-weight":650});
-   grp.appendChild(element("line",{x1:bx+8,x2:bx+rect.width-8,y1:by+30,y2:by+30,stroke:"#d2dae0"}));
-   const input=node.input.length?"["+node.input.join(",")+"]":"[]";
-   const output=node.output.length?node.output.map(m=>m.to+":"+m.value).join(", "):"—";
-   const rows=[["inputs",input],["value",distanceText(node.value)],["output",output]];
-   const previous=pregelIndex>0?pregelHistory[pregelIndex-1]?.states.find(x=>x.id===id):null;
+   drawRunCardFrame(grp,bx,by,rect,id,{fill:color,stroke:hot?"#155c86":node.active?"#9bb8ca":"#c4cdd3",focused:hot,
+     status:node.active?"Active":"Halted",dot:node.active?"#155c86":"#aab7c0"});
+    const input=node.input.length?"["+node.input.join(",")+"]":"[]";
+   const output=formatRunOutput(node.output);
+   const rows=[["inputs",input],["value",distanceText(node.value)],["output",output],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
+   const previous=pregelIndex>0?((pregelHistory[pregelIndex-1]||{}).states||[]).find(x=>x.id===id):null;
    const before=previous?[previous.input.length?"["+previous.input.join(",")+"]":"[]",
-    distanceText(previous.value),previous.output.length?previous.output.map(m=>m.to+":"+m.value).join(", "):"—"]:null;
-   rows.forEach(([name,value],i)=>{
-    const y=by+52+i*24,changed=before!==null&&before[i]!==value;
-    if(changed)grp.appendChild(element("rect",{x:bx+58,y:y-15,width:rect.width-66,height:19,rx:3,fill:"#e1ebf2"}));
-    svgText(grp,bx+9,y,name,{"font-size":12,fill:"#64717b","font-weight":650});
-    svgText(grp,bx+61,y,value.length>16?value.slice(0,15)+"…":value,
-      {"font-size":12,fill:changed?"#155c86":"#26333d","font-weight":650});
-   });
-   const tooltip=element("title",{});tooltip.textContent="頂点 "+id+" / "+(node.active?"Active":"Halted")+
-    " / inputs: "+input+" / value: "+distanceText(node.value)+" / output: "+output;
+    distanceText(previous.value),formatRunOutput(previous.output),previous.candidate==null?"—":distanceText(previous.candidate)]:null;
+   drawRunCardRows(grp,bx,by,rect,rows,before);
+    const tooltip=element("title",{});tooltip.textContent="頂点 "+id+" / "+(node.active?"Active":"Halted")+
+    " / inputs: "+input+" / value: "+distanceText(node.value)+" / output: "+output+" / candidate: "+(node.candidate==null?"—":distanceText(node.candidate));
    grp.appendChild(tooltip);cardFrag.appendChild(grp);continue;
   }
   // DFS retains its own path and current-node semantics.
-  const candidate=f?.nodeStates?.[id]?.input,state=dfsNodeState(f,id),
+  const node=(f&&f.nodeStates&&f.nodeStates[id])||{input:null,value:Infinity,output:[],candidate:null},state=dfsNodeState(f,id),
    action=state==="current"?currentAction(f):null,paint=nodePaint(state);
   const grp=element("g",{"data-node-id":id,"data-node-state":state,
     "data-node-action":action||"",role:"presentation",
     class:"run-card"+(state==="current"?" run-card-current":"")});
-  grp.appendChild(element("rect",{x:bx,y:by,width:rect.width,height:rect.height,rx:6,
-   fill:paint.fill,stroke:paint.stroke,"stroke-width":state==="current"?3:state==="path"?2.5:1.3}));
-  svgText(grp,bx+10,by+21,"頂点 "+id,{class:"run-vertex-label",fill:paint.text});
-  if(state==="current"){
-   svgText(grp,bx+rect.width-8,by+20,"現頂点（"+({first:"初",revisit:"再",return:"復"}[action])+"）",
-    {"text-anchor":"end","font-size":11,fill:paint.text,"font-weight":750,class:"current-action"});
-  }
-  grp.appendChild(element("line",{x1:bx+8,x2:bx+rect.width-8,y1:by+30,y2:by+30,stroke:paint.text==="#fff"?"#9ac2dc":"#d2dae0"}));
-  svgText(grp,bx+10,by+56,"input",{class:"run-row-label",fill:paint.text});
-  svgText(grp,bx+93,by+56,candidate===null||candidate===undefined?"—":distanceText(candidate),
-   {class:"run-row-value",fill:paint.text});
-  svgText(grp,bx+10,by+83,"value",{class:"run-row-label",fill:paint.text});
-  svgText(grp,bx+93,by+83,distanceText(f?.nodeStates?.[id]?.value??Infinity),
-   {class:"run-row-value",fill:paint.text,"font-size":14});
-  cardFrag.appendChild(grp);
+  drawRunCardFrame(grp,bx,by,rect,id,{fill:paint.fill,stroke:paint.stroke,focused:state==="current",path:state==="path",dark:state==="current",
+    status:state==="current"?"現頂点（"+({first:"初",revisit:"再",return:"復"}[action])+"）":""});
+   const rows=[["input",node.input==null?"—":distanceText(node.input)],["value",distanceText(node.value)],
+    ["output",formatRunOutput(node.output)],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
+   drawRunCardRows(grp,bx,by,rect,rows);
+   const tooltip=element("title",{});tooltip.textContent="頂点 "+id+" / "+rows.map(([key,value])=>key+": "+value).join(" / ");
+   grp.appendChild(tooltip);
+   cardFrag.appendChild(grp);
  }
- $("vertex-layer"+stage).replaceChildren(cardFrag);
- $("token-layer"+stage).replaceChildren();
+ replaceChildrenCompat($("vertex-layer"+stage),cardFrag);
+ replaceChildrenCompat($("token-layer"+stage));
  updateGraphZoom(stage);
 }
 function renderCycles(){
@@ -1419,13 +1657,13 @@ function renderCycles(){
   const msg=document.createElement("p");msg.className="muted";
   msg.textContent="この頂点を含むサイクルはありません。";frag.appendChild(msg);
  }
- list.replaceChildren(frag);
+ replaceChildrenCompat(list,frag);
  $("cycle-extra").hidden=found.length<=5;
 }
 function selectVertex(id){selectedVertex=id;activeCycle=null;renderCycles();draw(1);}
 function option(value,text){const e=document.createElement("option");e.value=String(value);e.textContent=String(text);return e;}
 function syncSelector(id,defaultValue){
- const e=$(id),old=Number(e.value)||defaultValue;e.replaceChildren();
+ const e=$(id),old=Number(e.value)||defaultValue;replaceChildrenCompat(e);
  graph.vertices.forEach(v=>e.appendChild(option(v,v)));
  e.value=String(graph.vertices.includes(old)?old:graph.vertices[0]);
 }
@@ -1448,7 +1686,7 @@ function renderEdges(){
   row.append(left,choose,right);frag.appendChild(row);
  }
  if(!pairs(graph).length){const p=document.createElement("p");p.className="muted";p.textContent="辺がありません。";frag.appendChild(p);}
- $("edge-list").replaceChildren(frag);
+ replaceChildrenCompat($("edge-list"),frag);
  $("edge-direction").disabled=graphMode==="undirected";
  if(graphMode==="undirected")$("edge-direction").value="both";
 }
@@ -1459,21 +1697,21 @@ function pause(){
   const t=motion;motion=null;
   if(t.rafId!==null&&typeof window.cancelAnimationFrame==="function")
    window.cancelAnimationFrame(t.rafId);
-  $("token-layer"+t.stage).replaceChildren();
+  replaceChildrenCompat($("token-layer"+t.stage));
   commitFrame(t.stage,t.target);
  }
 }
 function syncSSSPControls(){
  startVertex=ssspStart(graph);
  for(const p of ["dfs","pregel"]){
-  $(p+"-source-label").textContent=startVertex===null?"開始頂点：未確定":"開始頂点："+startVertex+"（初期value = 0）";
+  $(p+"-source-label").textContent=startVertex===null?"開始頂点：未確定":"開始頂点："+startVertex+"（初期value = −1）";
   $(p+"-init-error").textContent=startVertex===null?SSSP_ERROR:"";
   $(p+"-init-error").hidden=startVertex!==null;
  }
 }
 function resetDFS(){
  pause();syncSSSPControls();
- frames=startVertex!==null?dfsFrames(graph,startVertex):[{type:"initial",line:0,stack:[],visited:[],current:null,move:null,nodeStates:Object.fromEntries(graph.vertices.map(id=>[id,{input:null,value:initialValue(graph,id)}])),inspected:[],checked:0,edgeTotal:graph.edges.length,note:SSSP_ERROR}];
+ frames=startVertex!==null?dfsFrames(graph,startVertex):[{type:"initial",line:0,stack:[],visited:[],current:null,move:null,nodeStates:entriesObject(graph.vertices.map(id=>[id,{input:null,value:initialValue(graph,id),output:[],candidate:null}])),inspected:[],checked:0,edgeTotal:graph.edges.length,note:SSSP_ERROR}];
  frameIndex=0;renderDFS();
 }
 function resetPregel(){
@@ -1481,15 +1719,17 @@ function resetPregel(){
  pregelHistory=startVertex!==null?pregelFrames(graph,startVertex):[{phase:"invalid",superstep:null,line:0,focus:[],states:graph.vertices.map(id=>({id,active:false,value:initialValue(graph,id),input:[],output:[]})),incoming:[],sent:[],note:SSSP_ERROR}];
  pregelIndex=0;renderPregel();
 }
+// Vertex navigation follows the walk itself: a Compute completion or a
+// backtrack to the parent is one stop. A backtrack does not invoke Compute.
+function isDFSVertexStop(frame){
+ return frame.type==="complete"||frame.type==="complete-revisit"||frame.type==="backtrack";
+}
 function nextDFSVertexIndex(afterIndex){
- // Stop immediately after the next Compute invocation completes, including a revisit.
- return frames.findIndex((frame,index)=>index>afterIndex&&
-  (frame.type==="complete"||frame.type==="complete-revisit"));
+ return frames.findIndex((frame,index)=>index>afterIndex&&isDFSVertexStop(frame));
 }
 function previousDFSVertexIndex(beforeIndex){
- // Return to the previous completed Compute (initial state if none).
  for(let i=beforeIndex-1;i>0;i--){
-  if(frames[i].type==="complete"||frames[i].type==="complete-revisit")return i;
+  if(isDFSVertexStop(frames[i]))return i;
  }
  return 0;
 }
@@ -1499,7 +1739,18 @@ function previousDFSVertex(){
 function nextDFSVertex(){
  pause();
  const target=nextDFSVertexIndex(frameIndex);
- if(target>=0)moveTo(2,target);
+ if(target<0)return;
+ // A vertex jump skips Compute lines, but must still show the edge traversal
+ // leading to the next Compute completion or the backtrack stop.
+ const travel=frames.findIndex((frame,index)=>index>frameIndex&&index<=target&&frame.move!==null);
+ if(travel>=0){
+  const plan=travelPlan(2,travel);
+  if(plan.length){
+   frameIndex=travel-1;renderDFS();
+   animateTravel(2,target,plan);return;
+  }
+ }
+ moveTo(2,target);
 }
 function playback(stage,animate=false){
  const index=stage===2?frameIndex:pregelIndex,hist=stage===2?frames:pregelHistory,prefix=stage===2?"dfs":"pregel";
@@ -1513,7 +1764,7 @@ function playback(stage,animate=false){
   $("dfs-prev-vertex").disabled=index===0||motion!==null;
  }
  if(stage===3){
-  const current=pregelHistory[pregelIndex],ss=current?.superstep;
+  const current=pregelHistory[pregelIndex],ss=(current&&current.superstep);
   const nextSS=pregelHistory.some((f,i)=>i>pregelIndex&&f.phase==="call"&&(ss===null||f.superstep>ss));
   $("pregel-next-ss").disabled=!nextSS&&pregelIndex>=pregelHistory.length-1;
   $("pregel-prev-ss").disabled=pregelIndex===0;
@@ -1523,40 +1774,370 @@ function playback(stage,animate=false){
  draw(stage,false);
 }
 const DFS_CODE=[
- "function compute(input, value, api) {",
- "  if (input == 0 && value == 0) {",
+ "function compute(input, api) {",
+ "  let candidate;",
+ "  candidate = input;",
+ "  if (api.getValue() == -1) {",
+ "    api.setValue(0);",
  "    api.exploreNeighbors(1);",
- "  } else if (input < value) {",
- "    api.setValue(input);",
- "    api.exploreNeighbors(input + 1);",
+ "  } else if (candidate < api.getValue()) {",
+ "    api.setValue(candidate);",
+ "    api.exploreNeighbors(api.getValue() + 1);",
  "  }",
  "}"
 ];
 const PREGEL_CODE=[
- "function compute(inputs, value, api) {",
- "  const next = Math.min(...inputs);",
- "  if (api.superstep == 0 && value == 0) {",
+ "function compute(inputs, api) {",
+ "  let candidate;",
+  "  candidate = Math.min(...inputs);",
+ "  if (api.getValue() == -1) {",
+ "    api.setValue(0);",
  "    api.sendToNeighbors(1);",
- "  } else if (next < value) {",
- "    api.setValue(next);",
- "    api.sendToNeighbors(next + 1);",
+ "  } else if (candidate < api.getValue()) {",
+ "    api.setValue(candidate);",
+ "    api.sendToNeighbors(api.getValue() + 1);",
  "  }",
  "  api.voteToHalt();",
  "}"
 ];
+const COMPUTE_HELP={
+ "2": [
+  {
+   "id": "input",
+   "title": "input",
+   "description": "この頂点が受け取った距離（候補）です。逐次実行ではinputは1つの値です。開始頂点の初回実行では受信データがないためnullです。",
+   "parts": [
+    [
+     1,
+     "input"
+    ]
+   ]
+  },
+  {
+   "id": "api",
+   "title": "api",
+   "description": "DFS実行モデルが提供する機能群です。頂点が保持する値の取得・更新や、隣接頂点へのデータ送信を依頼する機能が含まれます。",
+   "parts": [
+    [
+     1,
+     "api"
+    ]
+   ]
+  },
+  {
+   "id": "candidate",
+   "title": "candidate",
+   "description": "頂点が保持する値の更新候補を格納するローカル変数です。Computeを呼び出すたびに宣言され、値を代入するまでは「—」と表示されます。",
+   "parts": [
+    [
+     2,
+     "let candidate;"
+    ]
+   ]
+  },
+  {
+   "id": "assign",
+   "title": "更新候補の決定",
+   "description": "逐次実行では1回のComputeで受け取る値は1つなので、inputをそのまま更新候補candidateに格納します。開始頂点ではinputがnull（受信データなし）です。",
+   "parts": [
+    [
+     3,
+     "candidate = input;"
+    ]
+   ]
+  },
+  {
+   "id": "start",
+   "title": "開始頂点の判定",
+   "description": "初期状態では開始頂点のみvalueが−1で、その他の頂点は∞です。api.getValue()で現在の保持値を取得し、まだ初期化されていない開始頂点かどうかを判定します。",
+   "parts": [
+    [
+     4,
+     "if (api.getValue() == -1)"
+    ]
+   ]
+  },
+  {
+   "id": "start-value",
+   "title": "開始頂点の距離を設定",
+   "description": "開始頂点から自分自身までの距離は0なので、この頂点が保持する値を0に更新します。",
+   "parts": [
+    [
+     5,
+     "api.setValue(0);"
+    ]
+   ]
+  },
+  {
+   "id": "start-send",
+   "title": "隣接頂点への探索依頼",
+   "description": "開始頂点から隣接頂点までの距離は1です。隣接頂点へ距離1を渡すようDFS実行モデルに依頼します。",
+   "parts": [
+    [
+     6,
+     "api.exploreNeighbors(1);"
+    ]
+   ]
+  },
+  {
+   "id": "compare",
+   "title": "より短い距離かを判定",
+   "description": "api.getValue()はこの頂点が現在保持する距離を取得します。更新候補candidateが保持している距離より短い場合に、以下の処理を実行します。",
+   "parts": [
+    [
+     7,
+     "if (candidate < api.getValue())"
+    ]
+   ]
+  },
+  {
+   "id": "update",
+   "title": "距離の更新",
+   "description": "この頂点が保持する距離を、更新候補candidateに更新します。",
+   "parts": [
+    [
+     8,
+     "api.setValue(candidate);"
+    ]
+   ]
+  },
+  {
+   "id": "continue",
+   "title": "探索の継続",
+   "description": "この頂点が保持する距離に辺の長さ1を加えた距離（候補）を、隣接頂点に渡すようDFSに依頼します。距離は8行目で更新されています。",
+   "parts": [
+    [
+     9,
+     "api.exploreNeighbors(api.getValue() + 1);"
+    ]
+   ]
+  }
+ ],
+ "3": [
+  {
+   "id": "inputs",
+   "title": "inputs",
+   "description": "前のSuperstepで送られた距離（候補）の配列です。複数の頂点から受信することがあります。SS0ではinputsは空です。",
+   "parts": [
+    [
+     1,
+     "inputs"
+    ]
+   ]
+  },
+  {
+   "id": "api",
+   "title": "api",
+   "description": "Pregel実行モデルが提供する機能群です。頂点が保持する値の取得・更新、メッセージの送信予約、Haltedへの移行などに使います。",
+   "parts": [
+    [
+     1,
+     "api"
+    ]
+   ]
+  },
+  {
+   "id": "candidate",
+   "title": "candidate",
+   "description": "頂点が保持する値の更新候補を格納するローカル変数です。Computeを呼び出すたびに宣言され、値を代入するまでは「—」と表示されます。",
+   "parts": [
+    [
+     2,
+     "let candidate;"
+    ]
+   ]
+  },
+  {
+   "id": "min",
+   "title": "受信した距離候補の最小値",
+   "description": "受け取った距離（候補）から最小値を選び、candidateに格納します。inputsが空の場合は∞になります。",
+   "parts": [
+    [
+     3,
+     "candidate = Math.min(...inputs);"
+    ]
+   ]
+  },
+  {
+   "id": "start",
+   "title": "開始頂点の判定",
+   "description": "初期状態では開始頂点のみvalueが−1で、その他の頂点は∞です。api.getValue()で現在の保持値を取得し、まだ初期化されていない開始頂点かどうかを判定します。",
+   "parts": [
+    [
+     4,
+     "if (api.getValue() == -1)"
+    ]
+   ]
+  },
+  {
+   "id": "start-value",
+   "title": "開始頂点の距離を設定",
+   "description": "開始頂点から自分自身までの距離は0なので、この頂点が保持する値を0に更新します。",
+   "parts": [
+    [
+     5,
+     "api.setValue(0);"
+    ]
+   ]
+  },
+  {
+   "id": "start-send",
+   "title": "隣接頂点への送信予約",
+   "description": "開始頂点から隣接頂点までの距離は1です。隣接頂点へ距離1を渡すようPregel実行モデルに依頼します。メッセージは次のSuperstepで届きます。",
+   "parts": [
+    [
+     6,
+     "api.sendToNeighbors(1);"
+    ]
+   ]
+  },
+  {
+   "id": "compare",
+   "title": "より短い距離かを判定",
+   "description": "api.getValue()はこの頂点が現在保持する距離を取得します。受け取った距離（候補）の最小値candidateが保持している距離より短い場合に、以下の処理を実行します。",
+   "parts": [
+    [
+     7,
+     "if (candidate < api.getValue())"
+    ]
+   ]
+  },
+  {
+   "id": "update",
+   "title": "距離の更新",
+   "description": "この頂点が保持する距離を、受け取った距離（候補）の最小値candidateに更新します。",
+   "parts": [
+    [
+     8,
+     "api.setValue(candidate);"
+    ]
+   ]
+  },
+  {
+   "id": "send",
+   "title": "距離候補の送信",
+   "description": "この頂点が保持する距離に辺の長さ1を加えた距離（候補）を、隣接頂点へ送信するよう予約します。距離は8行目で更新され、メッセージは次のSuperstepで届きます。",
+   "parts": [
+    [
+     9,
+     "api.sendToNeighbors(api.getValue() + 1);"
+    ]
+   ]
+  },
+  {
+   "id": "halt",
+   "title": "voteToHalt()",
+   "description": "この頂点をHaltedにします。その後のSuperstepでメッセージを受信すると、再びActiveになります。",
+   "parts": [
+    [
+     11,
+     "api.voteToHalt();"
+    ]
+   ]
+  }
+ ]
+};
+function computeHelpRanges(stage,source){
+ const rows=source.map(()=>[]);
+ for(const group of COMPUTE_HELP[stage]){
+  for(const [line,term] of group.parts){
+   const str=source[line-1],from=str==null?-1:str.indexOf(term);
+   if(from<0||str.indexOf(term,from+term.length)>=0)throw Error("Invalid Compute help range: "+term);
+   rows[line-1].push({from,to:from+term.length,group});
+  }
+ }
+ for(const row of rows){
+  row.sort((a,b)=>a.from-b.from);
+  for(let i=1;i<row.length;i++)if(row[i-1].to>row[i].from)throw Error("Overlapping Compute help ranges");
+ }
+ return rows;
+}
+let computeHelpOpen=null,computeHelpPopup=null;
+function closeComputeHelp(){
+ if(!computeHelpOpen)return;
+ for(const token of computeHelpOpen.holder.querySelectorAll(".help-selected")){
+  token.classList.remove("help-selected");token.setAttribute("aria-expanded","false");
+ }
+ computeHelpOpen=null;
+ if(computeHelpPopup)computeHelpPopup.hidden=true;
+}
+function positionComputeHelp(){
+ if(!computeHelpOpen||!computeHelpPopup)return;
+ const {anchor}=computeHelpOpen,r=anchor.getBoundingClientRect(),p=computeHelpPopup;
+ if(!document.documentElement.contains(anchor)||r.bottom<0||r.top>window.innerHeight){closeComputeHelp();return;}
+ const w=p.offsetWidth,h=p.offsetHeight;
+ p.style.left=Math.max(10,Math.min(r.left,window.innerWidth-w-10))+"px";
+ // Prefer below; put it above if space is limited.
+ p.style.top=Math.max(8,Math.min(r.bottom+8+h<=window.innerHeight?r.bottom+8:r.top-h-8,window.innerHeight-h-8))+"px";
+}
+function openComputeHelp(holder,group,anchor,pinned){
+ if((computeHelpOpen&&computeHelpOpen.holder)===holder&&computeHelpOpen.group===group){
+  if(pinned&&computeHelpOpen.pinned){closeComputeHelp();return;}
+  computeHelpOpen.pinned=computeHelpOpen.pinned||pinned;computeHelpOpen.anchor=anchor;positionComputeHelp();return;
+ }
+ closeComputeHelp();
+ if(!computeHelpPopup){
+  computeHelpPopup=document.createElement("div");
+  computeHelpPopup.id="compute-help-popup";computeHelpPopup.className="code-help-popup";
+  computeHelpPopup.setAttribute("role","tooltip");document.body.appendChild(computeHelpPopup);
+ }
+ const title=document.createElement("strong"),description=document.createElement("p");
+ title.textContent=group.title;description.textContent=group.description;
+ replaceChildrenCompat(computeHelpPopup,title,description);computeHelpPopup.hidden=false;
+ computeHelpOpen={holder,group,anchor,pinned};
+ for(const token of holder.querySelectorAll("[data-help-group]")){
+  if(token.dataset.helpGroup===group.id){token.classList.add("help-selected");token.setAttribute("aria-expanded","true");}
+ }
+ positionComputeHelp();
+}
+function appendComputeHelpToken(code,holder,group,term){
+ const token=document.createElement("button");
+ token.type="button";token.className="code-help-token";token.dataset.helpGroup=group.id;
+ token.textContent=term;token.setAttribute("aria-label",term+"："+group.title+"の説明");
+ token.setAttribute("aria-expanded","false");token.setAttribute("aria-controls","compute-help-popup");
+ token.addEventListener("click",()=>openComputeHelp(holder,group,token,true));
+ token.addEventListener("pointerenter",e=>{
+  if(e.pointerType==="mouse"&&!(computeHelpOpen&&computeHelpOpen.pinned))openComputeHelp(holder,group,token,false);
+ });
+ token.addEventListener("pointerleave",e=>{
+  if(e.pointerType==="mouse"&&(computeHelpOpen&&computeHelpOpen.anchor)===token&&!computeHelpOpen.pinned)closeComputeHelp();
+ });
+ code.appendChild(token);
+}
+function dismissComputeHelpOutside(e){if(computeHelpOpen&&!e.target.closest(".code-help-token,.code-help-popup"))closeComputeHelp();}
+if("PointerEvent" in window)document.addEventListener("pointerdown",dismissComputeHelpOutside);
+else{document.addEventListener("mousedown",dismissComputeHelpOutside);document.addEventListener("touchstart",dismissComputeHelpOutside,{passive:true});}
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"&&computeHelpOpen){e.preventDefault();closeComputeHelp();}
+});
+window.addEventListener("resize",positionComputeHelp);
+window.addEventListener("scroll",positionComputeHelp,true);
 function renderCodeTrace(stage,activeLine){
  const holder=$(stage===2?"dfs-code":"pregel-code"),source=stage===2?DFS_CODE:PREGEL_CODE;
- const frag=document.createDocumentFragment();
- source.forEach((str,i)=>{
-  const line=document.createElement("div");line.className="code-line"+(i+1===activeLine?" hot":"");
-  const num=document.createElement("span");num.className="num";num.setAttribute("aria-hidden","true");num.textContent=String(i+1);
-  const code=document.createElement("code");code.textContent=str||" ";
-  if(i+1===activeLine)line.setAttribute("aria-current","step");
-  line.append(num,code);frag.appendChild(line);
+ // Build once. Stepping only updates the execution-line state, preserving
+ // keyboard focus and any open explanation; no automatic explanation opens.
+ if(!holder.dataset.helpReady){
+  const frag=document.createDocumentFragment(),ranges=computeHelpRanges(stage,source);
+  source.forEach((str,i)=>{
+   const line=document.createElement("div");line.className="code-line";
+   const num=document.createElement("span");num.className="num";num.setAttribute("aria-hidden","true");num.textContent=String(i+1);
+   const code=document.createElement("code");let cursor=0;
+   for(const range of ranges[i]){
+    code.appendChild(document.createTextNode(str.slice(cursor,range.from)));
+    appendComputeHelpToken(code,holder,range.group,str.slice(range.from,range.to));cursor=range.to;
+   }
+   code.appendChild(document.createTextNode(str.slice(cursor)||(!str?" ":"")));
+   line.append(num,code);frag.appendChild(line);
+  });
+  replaceChildrenCompat(holder,frag);holder.dataset.helpReady="true";
+ }
+ [...holder.children].forEach((line,i)=>{
+  const hot=i+1===activeLine;line.classList.toggle("hot",hot);
+  if(hot)line.setAttribute("aria-current","step");else line.removeAttribute("aria-current");
  });
- holder.replaceChildren(frag);
  const hot=holder.querySelector(".hot");
  if(hot&&holder.scrollHeight>holder.clientHeight)hot.scrollIntoView({block:"nearest"});
+ positionComputeHelp();
 }
 // All execution pages share the same table and the same aggregation semantics.
 const ANALYSIS_GROUPS=[
@@ -1594,9 +2175,10 @@ function renderAnalysis(target,values){
 function dfsAnalysis(history,index,vertexCount){
  const f=history[index];
  const computes=history.slice(0,index+1).filter(x=>x.type==="complete"||x.type==="complete-revisit").length;
- return {vertices:f?.line&&f.current!==null?String(f.current):null,line:f?.line?f.line+"行目":null,
-  steps:computes,computes,visited:(f?.visited.length||0)+" / "+vertexCount,edges:(f?.checked||0)+" / "+(f?.edgeTotal||0)};
+ return {vertices:(f&&f.line)&&f.current!==null?String(f.current):null,line:(f&&f.line)?f.line+"行目":null,
+  steps:computes,computes,visited:((f&&f.visited.length)||0)+" / "+vertexCount,edges:((f&&f.checked)||0)+" / "+((f&&f.edgeTotal)||0)};
 }
+function playgroundCodeLine(f){return (f&&f.phase)==="call"?1:(f&&f.phase)==="line"||(f&&f.phase)==="error"?f.line+1:0;}
 function parallelAnalysis(history,index,playground=false){
  const f=history[index];let steps=0,computes=0,received=0,previousSent=0,executing=0,output=0;
  for(let i=0;i<=index&&i<history.length;i++){
@@ -1614,9 +2196,9 @@ function parallelAnalysis(history,index,playground=false){
   // A limit frame in the worker retains the prior output; it has already been counted at delivery.
   if(playground&&x.phase==="limit")output=0;
  }
- const line=!f?0:playground?(f.phase==="call"?1:f.phase==="init-current"?2:f.phase==="init-next"?3:f.phase==="line"||f.phase==="error"?f.line+3:0):(f.line||0);
+ const line=!f?0:playground?playgroundCodeLine(f):(f.line||0);
  const ss=f?(playground?f.ss:f.superstep):null;
- return {vertices:line?listAnalysisVertices(f?.focus):null,line:line?line+"行目":null,
+ return {vertices:line?listAnalysisVertices((f&&f.focus)):null,line:line?line+"行目":null,
   superstep:ss===null||ss===undefined?null:"SS"+ss,
   active:f&&f.phase!=="invalid"?(f.states.filter(n=>n.active).map(n=>n.id).join("、")||"なし"):null,
   steps,computes,received,sent:previousSent+output};
@@ -1625,7 +2207,7 @@ function renderDFS(animate=false){
  const f=frames[frameIndex];if(!f)return;
  $("dfs-status").textContent=f.note;
  renderAnalysis("dfs-analysis",dfsAnalysis(frames,frameIndex,graph.vertices.length));
- $("dfs-graph-guide").textContent="探索者は1人。DFS順に道をたどり、戻りながら距離候補を伝えます。短い距離が見つかれば再訪でも更新します。濃い青は現在の経路、薄い青は確認済みの辺です。";
+ $("dfs-graph-guide").textContent="各頂点のinput（受信した距離候補）、value（保持する距離）、output（探索依頼）、candidate（更新候補）を確認しましょう。outputの宛先へ順番に値を渡します。濃い青は現在の経路、薄い青は確認済みの辺です。";
  renderCodeTrace(2,f.line||0);
  playback(2,animate);
 }
@@ -1643,14 +2225,14 @@ function travelPlan(stage,target){
  if(stage===3){
   const next=pregelHistory[target];
   // Animate at the SS barrier, after voteToHalt and before receiver activation.
-  return next?.phase==="delivery"?
+  return (next&&next.phase)==="delivery"?
    next.sent.map(m=>({edgeFrom:m.from,edgeTo:m.to,reverse:false,label:String(m.value)})):[];
  }
- const m=frames[target]?.move;
+ const m=(frames[target]&&frames[target].move);
  if(!m)return [];
  const reverse=m.kind==="return"||m.kind==="check-return";
  return [{edgeFrom:reverse?m.to:m.from,edgeTo:reverse?m.from:m.to,
-  reverse,label:reverse?"復":"▶"}];
+  reverse,label:reverse?"復":String(m.value)}];
 }
 function commitFrame(stage,target){
  if(stage===2){frameIndex=target;renderDFS();}
@@ -1673,19 +2255,16 @@ function animateTravel(stage,target,plan){
  playback(stage,false);
  const travelLayout=cardLayout(stage),positions=travelLayout.p,fragment=document.createDocumentFragment(),items=[];
  for(const msg of plan){
-  const seg=runSegment(graph,"directed",positions,msg.edgeFrom,msg.edgeTo,travelLayout.rect);
+  const seg=runSegment(graph,graphMode,positions,msg.edgeFrom,msg.edgeTo,travelLayout.rect);
   const from=msg.reverse?seg.to:seg.from,to=msg.reverse?seg.from:seg.to;
   const key=msg.edgeFrom+":"+msg.edgeTo;
   const trail=element("line",{x1:from.x,y1:from.y,x2:from.x,y2:from.y,
    class:"motion-trail","data-motion-trail":key});
-  const dot=element("g",{class:"motion-dot",transform:"translate("+from.x+" "+from.y+")",
-   "data-motion-edge":key,"data-motion-direction":msg.reverse?"return":"forward"});
-  dot.appendChild(element("circle",{cx:0,cy:0,r:stage===3?15:12}));
-  svgText(dot,0,0,msg.label,{"text-anchor":"middle","font-size":11,fill:"#fff"});
-  fragment.appendChild(trail);fragment.appendChild(dot);
+  const dot=drawRunMotionDot(from,msg.label,{"data-motion-edge":key,"data-motion-direction":msg.reverse?"return":"forward"});
+   fragment.appendChild(trail);fragment.appendChild(dot);
   items.push({from,to,trail,dot});
  }
- $("token-layer"+stage).replaceChildren(fragment);
+ replaceChildrenCompat($("token-layer"+stage),fragment);
  const t={stage,target,start:null,rafId:null,items};motion=t;
  const prefix=stage===2?"dfs":"pregel";
  for(const name of ["prev","next","finish"])$(prefix+"-"+name).disabled=true;
@@ -1706,7 +2285,7 @@ function animateTravel(stage,target,plan){
    item.dot.setAttribute("transform","translate("+px+" "+py+")");
   }
   if(progress<1){t.rafId=window.requestAnimationFrame(tick);return;}
-  motion=null;$("token-layer"+stage).replaceChildren();
+  motion=null;replaceChildrenCompat($("token-layer"+stage));
   commitFrame(stage,target);
   if(isPlaying){
    const hist=stage===2?frames:pregelHistory;
@@ -1731,7 +2310,7 @@ function moveTo(stage,target){
 }
 function nextPregelSuperstep(){
  pause();
- const current=pregelHistory[pregelIndex],ss=current?.superstep;
+ const current=pregelHistory[pregelIndex],ss=(current&&current.superstep);
  const next=pregelHistory.findIndex((f,i)=>i>pregelIndex&&f.phase==="call"&&(ss===null||f.superstep>ss));
  if(next<0){moveTo(3,pregelHistory.length-1);return;}
  const delivery=pregelHistory.findIndex((f,i)=>i>pregelIndex&&f.phase==="delivery"&&f.superstep===ss);
@@ -1778,44 +2357,37 @@ function graphChanged(){
  const p4Paired=(a,b)=>[[a,b],[b,a]];
  const p4Ids=[1,2,3,4,5,6];
  const P4_SCENARIOS={
-  CC:{
+  SSSP:{
+    graph:clone(DEFAULT_GRAPH),
+    initializer:"return id === 1 ? -1 : Infinity;",
+    // Same SSSP Compute as ④, without its enclosing declaration.
+    compute:PREGEL_CODE.slice(2,-1).map(line=>line.slice(2)).join("\n"),params:{}
+   },
+   CC:{
    graph:{vertices:p4Ids,edges:[
     ...p4Paired(1,2),...p4Paired(2,3),...p4Paired(1,4),
     ...p4Paired(2,5),...p4Paired(5,6),...p4Paired(1,5),
     ...p4Paired(3,6)]},
    initializer:"return id;",
    compute:[
-    "next = Math.max(current, ...inputs);",
-    "if (api.superstep === 0 || next > current) {",
-    "  api.sendToNeighbors(next);","}",
-    "current = next;","api.setValue(current);","api.voteToHalt();"
-   ].join("\n"),params:{}
-  },
-  SSSP:{
-   graph:{vertices:p4Ids,edges:[[1,2],[1,3],[2,4],[2,5],[3,4],[3,5],[4,6],[5,6]]},
-   initializer:"return id === 1 ? 0 : Infinity;",
-   compute:[
-    "next = Math.min(...inputs);",
-    "if (api.superstep == 0 && value == 0) {",
-    "  api.sendToNeighbors(1);",
-    "} else if (next < value) {",
-    "  api.setValue(next);",
-    "  api.sendToNeighbors(next + 1);","}",
-    "api.voteToHalt();"
-   ].join("\n"),params:{sourceId:1}
+     "candidate = Math.max(api.getValue(), ...inputs);",
+     "if (api.superstep === 0 || candidate > api.getValue()) {",
+     "  api.setValue(candidate);",
+     "  api.sendToNeighbors(api.getValue());","}",
+     "api.voteToHalt();"
+    ].join("\n"),params:{}
   },
   PageRank:{
    graph:{vertices:p4Ids,edges:[[1,2],[1,3],[2,3],[2,4],[3,1],[3,4],[4,5],[5,4],[5,6],[6,1],[6,2]]},
    initializer:"return 1 / vertexCount;",
    compute:[
-    "next = current;",
-    "if (api.superstep > 0) {",
-    "  next = (1 - 0.85) / api.vertexCount;",
+        "if (api.superstep > 0) {",
+    "  candidate = (1 - 0.85) / api.vertexCount;",
     "  for (const received of inputs) {",
-    "    next += 0.85 * received;","  }",
-    "  api.setValue(next);","}",
+    "    candidate += 0.85 * received;","  }",
+    "  api.setValue(candidate);","}",
     "if (api.superstep < 6 && api.outDegree > 0) {",
-    "  api.sendToNeighbors(next / api.outDegree);","}",
+    "  api.sendToNeighbors(api.getValue() / api.outDegree);","}",
     "api.voteToHalt();"
    ].join("\n"),params:{iterations:6,damping:0.85}
   }
@@ -1823,16 +2395,252 @@ function graphChanged(){
 
 
 
+const ANSWER_MODE=/(?:^|&)answer(?:=[^&]*)?(?:&|$)/.test(window.location.search.slice(1));
+const ANSWER_SCENARIOS={
+ "Reachability": {
+  "label": "2頂点間の到達可能性（Reachability）",
+  "graphName": "2頂点間の到達可能性の解答用グラフ",
+  "mode": "directed",
+  "graph": {
+   "vertices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "edges": [
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     5,
+     6
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     6,
+     8
+    ]
+   ],
+   "values": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0
+   ]
+  },
+  "initializer": "return id === 1 ? 1 : id === 6 ? 2 : 0;",
+  "compute": "candidate = api.getValue();\nif (candidate === 2 && inputs.includes(1)) {\n  api.setValue(3);\n} else if (candidate === 0 && inputs.includes(1)) {\n  api.setValue(1);\n  api.sendToNeighbors(1);\n} else if (api.superstep === 0 && candidate === 1) {\n  api.sendToNeighbors(1);\n}\napi.voteToHalt();",
+  "params": {}
+ },
+ "CommonReachability": {
+  "label": "共通到達可能性",
+  "graphName": "共通到達可能性の解答用グラフ",
+  "mode": "directed",
+  "graph": {
+   "vertices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "edges": [
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     5,
+     6
+    ],
+    [
+     6,
+     7
+    ],
+    [
+     7,
+     6
+    ],
+    [
+     9,
+     1
+    ]
+   ],
+   "values": [
+    1,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "initializer": "return id === 1 ? 1 : id === 2 ? 2 : 0;",
+  "compute": "candidate = api.getValue();\nfor (const received of inputs) {\n  candidate = candidate | received;\n}\nif ((api.superstep === 0 && candidate > 0) || candidate !== api.getValue()) {\n  api.setValue(candidate);\n  api.sendToNeighbors(api.getValue());\n}\napi.voteToHalt();",
+  "params": {}
+ },
+ "Triangle": {
+  "label": "三角形の検出",
+  "graphName": "三角形検出の解答用グラフ",
+  "mode": "undirected",
+  "graph": {
+   "vertices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "edges": [
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     5,
+     4
+    ],
+    [
+     4,
+     6
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     6,
+     7
+    ],
+    [
+     7,
+     6
+    ]
+   ],
+   "values": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "initializer": "return 0;",
+  "compute": "const myNeighbors = api.outNeighbors();\nif (api.superstep === 0) {\n  api.sendToNeighbors(myNeighbors);\n} else {\n  candidate = 0;\n  for (const receivedNeighbors of inputs) {\n    for (const neighbor of myNeighbors) {\n      if (receivedNeighbors.includes(neighbor)) {\n        candidate = 1;\n      }\n    }\n  }\n  api.setValue(candidate);\n}\napi.voteToHalt();",
+  "params": {}
+ }
+};
+if(ANSWER_MODE){
+ for(const id of Object.keys(ANSWER_SCENARIOS))P4_SCENARIOS[id]=ANSWER_SCENARIOS[id];
+ $("challenge-answer-note").hidden=false;
+}
 const GRAPH_BUILTINS={
  "builtin:SSSP":{name:"SSSPグラフ",graph:clone(DEFAULT_GRAPH),mode:"directed"},
  "builtin:CC":{name:"CCグラフ",graph:{...clone(P4_SCENARIOS.CC.graph),values:P4_SCENARIOS.CC.graph.vertices.slice()},mode:"undirected"},
  "builtin:PageRank":{name:"PageRankグラフ",graph:{...clone(P4_SCENARIOS.PageRank.graph),values:P4_SCENARIOS.PageRank.graph.vertices.map(()=>1/P4_SCENARIOS.PageRank.graph.vertices.length)},mode:"directed"}
 };
+if(ANSWER_MODE)for(const id of Object.keys(ANSWER_SCENARIOS)){
+ const sc=ANSWER_SCENARIOS[id];GRAPH_BUILTINS["builtin:"+id]={name:sc.graphName,graph:clone(sc.graph),mode:sc.mode};
+}
 const MAX_USER_GRAPHS=100,graphLibrary={selectedId:"builtin:SSSP",users:[]};
 let graphMode="directed";
 function currentUserGraph(){return graphLibrary.users.find(d=>"user:"+d.id===graphLibrary.selectedId)||null;}
 function graphRecord(id){return Object.prototype.hasOwnProperty.call(GRAPH_BUILTINS,id)?GRAPH_BUILTINS[id]:graphLibrary.users.find(d=>"user:"+d.id===id)||null;}
-function graphName4(id=graphLibrary.selectedId){return graphRecord(id)?.name||id;}
+function graphName4(id=graphLibrary.selectedId){return (graphRecord(id)||{}).name||id;}
 function nextGraphId4(){let n=1;const seen=new Set(graphLibrary.users.map(d=>d.id));while(seen.has("g"+n))n++;return "g"+n;}
 function defaultGraphName4(){
  const root=graphName4()+" から作成",names=new Set(graphLibrary.users.map(d=>d.name));
@@ -1890,7 +2698,7 @@ function refreshGraphSelectors(){
  builtin.label="組み込み（変更不可）";users.label="ユーザ定義";
  for(const [id,d] of Object.entries(GRAPH_BUILTINS))builtin.appendChild(option(id,d.name));
  for(const d of graphLibrary.users)users.appendChild(option("user:"+d.id,d.name));
- el.replaceChildren(builtin,users);el.value=graphLibrary.selectedId;
+ replaceChildrenCompat(el,builtin,users);el.value=graphLibrary.selectedId;
  const d=currentUserGraph();
  $("graph-name1").value=d?d.name:"";
  $("graph-delete1").disabled=!d;
@@ -1977,17 +2785,20 @@ function restoreGraphLibrary4(data){
   let id=data.graphLibrary.selectedId;
   if(id==="builtin:lecture")id="builtin:SSSP";
   if(data.schema===3&&id==="builtin:SSSP"){
-   const old=clone(data.main.graph);old.values=data.main.graph.values?.slice()||defaultValues(old,data.main.start??1);
+   const old=clone(data.main.graph);old.values=(data.main.graph.values&&data.main.graph.values.slice())||defaultValues(old,(data.main.start==null?1:data.main.start));
+    // Update only the unmodified old built-in graph; never rewrite user graph values.
+    const previousBuiltin={...clone(DEFAULT_GRAPH),values:DEFAULT_GRAPH.vertices.map(id=>id===1?0:"Infinity")};
+    if(graphKey4(old,data.playground.mode)===graphKey4(previousBuiltin,"directed"))old.values=defaultValues(old);
    if(graphKey4(old,data.playground.mode)!==graphKey4(GRAPH_BUILTINS[id].graph,GRAPH_BUILTINS[id].mode))id=migrateGraph4(old,data.playground.mode,"旧SSSPグラフ");
   }else if(data.schema===3&&id.startsWith("user:")){
    const old=graphLibrary.users.find(d=>"user:"+d.id===id),raw=data.graphLibrary.users.find(d=>"user:"+d.id===id);
-   if(old&&!raw.graph.values)old.graph.values=defaultValues(old.graph,data.main.start??1);
+   if(old&&!raw.graph.values)old.graph.values=defaultValues(old.graph,(data.main.start==null?1:data.main.start));
   }
   const d=graphRecord(id);if(!d)throw Error("保存済みグラフが見つかりません");
   graphLibrary.selectedId=id;graph=clone(d.graph);graphMode=d.mode;return;
  }
  // Previously ① and ④ had separate graphs. Keep both, plus every Compute graph.
- const legacy=clone(data.main.graph);legacy.values=data.main.graph.values?.slice()||defaultValues(legacy,data.main.start??1);
+ const legacy=clone(data.main.graph);legacy.values=(data.main.graph.values&&data.main.graph.values.slice())||defaultValues(legacy,(data.main.start==null?1:data.main.start));
  const id=migrateGraph4(legacy,"directed","旧①のグラフ");
  migrateGraph4(data.playground.graph,data.playground.mode,"旧④のグラフ");
  for(const d of data.userDefinitions||[])if(d.graph)migrateGraph4(d.graph,d.mode,"旧Compute「"+d.name+"」のグラフ");
@@ -2003,7 +2814,7 @@ const stage4={
 };
 Object.defineProperty(stage4,"graph",{get:()=>graph,set:value=>{graph=clone(value);}});
 Object.defineProperty(stage4,"mode",{get:()=>graphMode,set:value=>{graphMode=value;}});
-const STORAGE_KEY="takezono-pregel-demo2-v1";
+const STORAGE_KEY="takezono-pregel-demo2-v1"+(ANSWER_MODE?"-answer":"");
 function storage4(){
  try{
   const key=STORAGE_KEY+"-probe";
@@ -2015,7 +2826,7 @@ function storage4(){
 const stateStorage=storage4();
 stage4.storageAvailable=Boolean(stateStorage);
 function captureWorkspace(){
- return{schema:4,main:{graph:clone(graph)},
+ return{schema:6,main:{graph:clone(graph)},
   playground:{selectedId:stage4.selectedDefinitionId,graph:clone(graph),mode:graphMode,
    scenario:stage4.baseScenario,code:stage4.code,initializer:stage4.initializer,
    params:{...stage4.params}},
@@ -2054,12 +2865,23 @@ function isBuiltinDefinition4(id){return Object.prototype.hasOwnProperty.call(P4
 function currentUserDefinition4(){
  return stage4.userDefinitions.find(d=>"user:"+d.id===stage4.selectedDefinitionId)||null;
 }
+function migrateLegacyCompute4(body){
+ const prefix=[];
+ if(/\binput\b/.test(body))prefix.push("const input = inputs;");
+ if(/\bvalue\b/.test(body))prefix.push("var value = api.getValue();");
+ if(/\bcurrent\b/.test(body))prefix.push("let current = "+(prefix.some(line=>line.startsWith("var value"))?"value":"api.getValue()")+";");
+ if(/\bnext\b/.test(body))prefix.push("let next;");
+ return prefix.length?prefix.join("\n")+"\n"+body:body;
+}
+function migrateCandidate4(body){
+ return body.replace(/^(?:const|let|var)[ \t]+candidate[ \t]*=[ \t]*([^;\n]+);[ \t]*$/gm,"candidate = $1;").replace(/^(?:let|var)[ \t]+candidate[ \t]*;[ \t]*$/gm,"candidate = undefined;");
+}
 function verifiedUserDefinition4(raw){
  if(!raw||typeof raw!=="object"||Array.isArray(raw))throw Error("ユーザComputeの形式が不正です");
  if(typeof raw.id!=="string"||!/^u[0-9]+$/.test(raw.id))throw Error("Compute IDが不正です");
  if(typeof raw.name!=="string"||!raw.name.trim()||raw.name.length>60)throw Error("Compute名は1〜60文字です");
  if(!isBuiltinDefinition4(raw.baseScenario))throw Error("元の組み込みComputeが不正です");
- if(typeof raw.code!=="string"||raw.code.length>8000||
+ if(typeof raw.code!=="string"||raw.code.length>8200||
   typeof raw.initializer!=="string"||raw.initializer.length>1500)throw Error("保存したComputeコードが長すぎます");
  const orig=P4_SCENARIOS[raw.baseScenario].params;
  const params=raw.params&&typeof raw.params==="object"&&!Array.isArray(raw.params)?raw.params:orig;
@@ -2083,13 +2905,14 @@ function defaultDefinitionName4(){
 function refreshDefinitionSelector4(){
  const select=$("p4-scenario"),builtins=document.createElement("optgroup"),users=document.createElement("optgroup");
  builtins.label="組み込み（変更不可）";users.label="ユーザ定義";
- for(const [id,label] of [["CC","連結成分（CC）"],["SSSP","最短経路（SSSP）"],["PageRank","PageRank"]]){
+ for(const [id,label] of [["SSSP","最短経路（SSSP）"],["CC","連結成分（CC）"],["PageRank","PageRank"]]){
   builtins.appendChild(option(id,label));
  }
+ if(ANSWER_MODE)for(const id of Object.keys(ANSWER_SCENARIOS))builtins.appendChild(option(id,ANSWER_SCENARIOS[id].label));
  for(const def of stage4.userDefinitions){
   users.appendChild(option("user:"+def.id,def.name));
  }
- select.replaceChildren(builtins,users);
+ replaceChildrenCompat(select,builtins,users);
  select.value=stage4.selectedDefinitionId;
  const user=currentUserDefinition4();
  $("p4-definition-name").value=user?user.name:"";
@@ -2170,9 +2993,9 @@ function loadStage4Scenario(name,persist=true){
 function updateEditor4(){
  const area=$("p4-code-input"),gutter=$("p4-editor-gutter");
  const count=area.value.split("\n").length;
- gutter.textContent=Array.from({length:count},(_,i)=>String(i+4)).join("\n");
+ gutter.textContent=Array.from({length:count},(_,i)=>String(i+3)).join("\n");
  gutter.scrollTop=area.scrollTop;
- $("p4-editor-tail-num").textContent=String(count+4);
+ $("p4-editor-tail-num").textContent=String(count+3);
 }
 function markEdited4(){
  const code=$("p4-code-input").value;
@@ -2198,13 +3021,13 @@ function formatValue4(v){
  return String(v);
 }
 function layoutStage4(){
- return squareCardLayout(stage4.graph.vertices,{width:204,height:178,gap:16},220);
+ return squareCardLayout(stage4.graph.vertices,PREGEL_CARD);
 }
 function drawStage4(){
  const svg=$("graph4"),f=stage4.frames[stage4.position],layout=layoutStage4(),p=layout.p,rect=layout.rect;
  svg.setAttribute("viewBox","0 0 "+layout.width+" "+layout.height);
  const es=document.createDocumentFragment(),nodes=document.createDocumentFragment();
- const hotFlow=new Set(f?.phase==="delivery"?f.flows.map(m=>m.from+":"+m.to):[]);
+ const hotFlow=new Set((f&&f.phase)==="delivery"?f.flows.map(m=>m.from+":"+m.to):[]);
  const directed=stage4.mode==="directed",drawn=new Set();
  for(const [a,b] of stage4.graph.edges){
   const pair=Math.min(a,b)+":"+Math.max(a,b);
@@ -2213,54 +3036,50 @@ function drawStage4(){
   const seg=runSegment(stage4.graph,directed?"directed":"undirected",p,a,b,rect);
   const hot=hotFlow.has(a+":"+b)||(!directed&&hotFlow.has(b+":"+a));
   es.appendChild(element("line",{x1:seg.from.x,y1:seg.from.y,x2:seg.to.x,y2:seg.to.y,
-   stroke:hot?"#155c86":"#aab7c0","stroke-width":hot?3.5:2.1,
-   "marker-end":directed?"url(#"+(hot?"arrow4-active":"arrow4")+")":"none"}));
+   ...runEdgeStyle(hot,false,directed?"url(#"+(hot?"arrow4-active":"arrow4")+")":"none")}));
  }
- const states=new Map((f?.states||[]).map(node=>[node.id,node]));
+ const states=new Map(((f&&f.states)||[]).map(node=>[node.id,node]));
  for(const id of stage4.graph.vertices){
-  const n=states.get(id)||{id,active:true,input:[],value:initialValue(graph,id),output:[],current:"—",next:"—"};
-  const pt=p.get(id),bx=pt.x-rect.width/2,by=pt.y-rect.height/2,focus=(f?.focus||[]).includes(id);
+  const n=states.get(id)||{id,active:true,input:[],value:initialValue(graph,id),output:[],candidate:null};
+  const pt=p.get(id),bx=pt.x-rect.width/2,by=pt.y-rect.height/2,focus=((f&&f.focus)||[]).includes(id);
   const g=element("g",{"data-node-id":id,"data-node-state":n.active?"active":"halted",
    "data-code-focus":String(focus),role:"presentation"});
-  g.appendChild(element("rect",{x:bx,y:by,width:rect.width,height:rect.height,rx:6,
-   fill:n.active?"#eef3f6":"#f4f6f7",stroke:focus?"#155c86":n.active?"#9bb8ca":"#c4cdd3",
-   "stroke-width":focus?3.2:1.4}));
-  svgText(g,bx+9,by+22,"頂点 "+id,{class:"run-vertex-label"});
-  g.appendChild(element("circle",{cx:bx+137,cy:by+17,r:5,fill:n.active?"#155c86":"#aab7c0"}));
-  svgText(g,bx+148,by+21,n.active?"Active":"Halted",{"font-size":12,fill:"#26333d","font-weight":650});
-  g.appendChild(element("line",{x1:bx+8,x2:bx+rect.width-8,y1:by+30,y2:by+30,stroke:"#d2dae0"}));
-  const values=[
+  drawRunCardFrame(g,bx,by,rect,id,{fill:n.active?"#eef3f6":"#f4f6f7",stroke:focus?"#155c86":n.active?"#9bb8ca":"#c4cdd3",focused:focus,
+    status:n.active?"Active":"Halted",dot:n.active?"#155c86":"#aab7c0"});
+   const values=[
    ["inputs",formatValue4(n.input)],["value",formatValue4(n.value)],
-   ["output",formatValue4(n.output.map(m=>({to:m.to,value:m.value})))],
-   ["current",formatValue4(n.current)],["next",formatValue4(n.next)]];
+   ["output",formatRunOutput(n.output,formatValue4)],
+   ["candidate",formatValue4(n.candidate)]];
   const prev=stage4.position>0?stage4.frames[stage4.position-1].states.find(x=>x.id===id):null;
   const before=prev?[
-   formatValue4(prev.input),formatValue4(prev.value),formatValue4(prev.output),
-   formatValue4(prev.current),formatValue4(prev.next)]:null;
-  values.forEach(([label,v],i)=>{
-   const y=by+51+i*24,changed=before&&before[i]!==v;
-   if(changed)g.appendChild(element("rect",{x:bx+65,y:y-16,width:rect.width-73,height:20,rx:2,fill:"#e5edf2"}));
-   svgText(g,bx+9,y,label,{"font-size":12,fill:"#64717b","font-weight":650});
-   svgText(g,bx+69,y,v.length>18?v.slice(0,17)+"…":v,
-    {"font-size":12,fill:changed?"#155c86":"#26333d","font-weight":650});
-  });
-  const title=element("title",{});title.textContent=JSON.stringify(n);g.appendChild(title);nodes.appendChild(g);
+   formatValue4(prev.input),formatValue4(prev.value),formatRunOutput(prev.output,formatValue4),
+   formatValue4(prev.candidate)]:null;
+  drawRunCardRows(g,bx,by,rect,values,before);
+   const title=element("title",{});title.textContent="頂点 "+id+" / "+(n.active?"Active":"Halted")+" / "+values.map(([key,value])=>key+": "+value).join(" / ");g.appendChild(title);nodes.appendChild(g);
  }
- $("edge-layer4").replaceChildren(es);
- $("vertex-layer4").replaceChildren(nodes);
- $("token-layer4").replaceChildren();
+ replaceChildrenCompat($("edge-layer4"),es);
+ replaceChildrenCompat($("vertex-layer4"),nodes);
+ replaceChildrenCompat($("token-layer4"));
  updateGraphZoom(4);
 }
 function recommendedInitialValues4(scenario,g){
  const n=g.vertices.length;
- if(scenario==="SSSP")return {description:"1頂点のみ0、残り∞",matches:ssspStart(g)!==null};
+ if(scenario==="SSSP")return {description:"1頂点のみ−1、残り∞",matches:ssspStart(g)!==null};
  if(scenario==="CC")return {description:"各頂点のID（1, 2, …）。無向グラフを使用",matches:g.vertices.every(id=>initialValue(g,id)===id)};
  if(scenario==="PageRank")return {description:"全頂点を1 / 頂点数（"+initialDisplay(1/n)+"）",matches:g.vertices.every(id=>Math.abs(initialValue(g,id)-1/n)<=1e-12)};
+ if(ANSWER_MODE&&scenario==="Reachability"){
+  const values=g.vertices.map(id=>initialValue(g,id));
+  return {description:"開始頂点Aを1、目的頂点Bを2（各1頂点）、残り0（有向グラフ）",matches:graphMode==="directed"&&values.filter(v=>v===1).length===1&&values.filter(v=>v===2).length===1&&values.every(v=>v===0||v===1||v===2)};
+ }
+ if(ANSWER_MODE&&scenario==="CommonReachability")return {description:"頂点1を1、頂点2を2、残り0（有向グラフ）",matches:g.vertices.every(id=>initialValue(g,id)===(id===1?1:id===2?2:0))&&graphMode==="directed"};
+ if(ANSWER_MODE&&scenario==="Triangle")return {description:"全頂点を0（無向グラフ）",matches:g.vertices.every(id=>initialValue(g,id)===0)&&graphMode==="undirected"};
  return null;
 }
 function renderInitialRecommendation4(){
- const info=recommendedInitialValues4(stage4.baseScenario,graph),el=$("p4-initial-values-note");
- const custom=!isBuiltinDefinition4(stage4.selectedDefinitionId);
+ const custom=!isBuiltinDefinition4(stage4.selectedDefinitionId),el=$("p4-initial-values-note");
+  const legacySSSP=custom&&stage4.baseScenario==="SSSP"&&stage4.initializer.trim()==="return id === 1 ? 0 : Infinity;";
+  const legacyStart=graph.vertices.filter(id=>initialValue(graph,id)===0);
+  const info=legacySSSP?{description:"旧SSSP（開始頂点0、残り∞）。新しい組み込みSSSPは開始頂点−1",matches:legacyStart.length===1&&graph.vertices.every(id=>id===legacyStart[0]||initialValue(graph,id)===Infinity)}:recommendedInitialValues4(stage4.baseScenario,graph);
  el.textContent=info?(custom?"元の組み込み"+stage4.baseScenario+"の初期値（参考）：":"推奨初期value：")+info.description+"。"+(info.matches?" 現在の初期valueは一致しています。":" 現在の初期valueは異なります。①で設定できます。"):"";
  if(!custom&&stage4.baseScenario==="CC"&&graphMode!=="undirected")el.textContent+=" 現在は有向グラフです。";
  el.classList.toggle("initial-value-mismatch",Boolean(info&&!custom&&(!info.matches||stage4.baseScenario==="CC"&&graphMode!=="undirected")));
@@ -2284,17 +3103,16 @@ function renderStage4(){
  $("p4-code-input").disabled=Boolean(stage4.worker);
  $("p4-trace").hidden=!stage4.ready;
  if(f&&stage4.ready){
-  const code=["function compute(inputs, value, api) {","  let current = value;","  let next;",...stage4.code.split("\n"),"}"];
-  const line=f.phase==="call"?1:f.phase==="init-current"?2:f.phase==="init-next"?3:
-   f.phase==="line"||f.phase==="error"?f.line+3:0;
+  const code=["function compute(inputs, api) {","  let candidate;",...stage4.code.split("\n"),"}"];
+  const line=playgroundCodeLine(f);
   const frag=document.createDocumentFragment();
   code.forEach((value,i)=>{
-   const row=document.createElement("div");row.className="code-line"+(i>=3&&i<code.length-1?" body-line":"")+(line===i+1?" hot":"");
+   const row=document.createElement("div");row.className="code-line"+(i>=2&&i<code.length-1?" body-line":"")+(line===i+1?" hot":"");
    const num=document.createElement("span");num.className="num";num.textContent=String(i+1);
    const cell=document.createElement("code");cell.textContent=value||" ";
    row.append(num,cell);frag.appendChild(row);
   });
-  $("p4-trace").replaceChildren(frag);
+  replaceChildrenCompat($("p4-trace"),frag);
  }
  drawStage4();
 }
@@ -2314,7 +3132,7 @@ function stopStage4(){
  if(stage4.raf!==null){cancelAnimationFrame(stage4.raf);stage4.raf=null;}
  stage4.animating=false;
  if(stage4.worker){stage4.worker.terminate();stage4.worker=null;stage4.token++;}
- if($("token-layer4"))$("token-layer4").replaceChildren();
+ if($("token-layer4"))replaceChildrenCompat($("token-layer4"));
  renderConfirmButton4();
 }
 function jumpStage4(target,animated=true){
@@ -2335,13 +3153,11 @@ function animateStage4(flows,target){
  for(const msg of flows.slice(0,60)){
   if(!p.has(msg.from)||!p.has(msg.to))continue;
   const seg=runSegment(graph,stage4.mode==="directed"?"directed":"undirected",p,msg.from,msg.to,rect);
-  const circle=element("g",{transform:"translate("+seg.from.x+" "+seg.from.y+")",class:"motion-dot"});
-  circle.appendChild(element("circle",{cx:0,cy:0,r:14}));
-  svgText(circle,0,0,formatValue4(msg.value),{"font-size":10,fill:"#fff","text-anchor":"middle"});
-  frag.appendChild(circle);tokens.push({seg,circle});
+  const circle=drawRunMotionDot(seg.from,formatValue4(msg.value));
+   frag.appendChild(circle);tokens.push({seg,circle});
  }
  if(!tokens.length){stage4.position=target;renderStage4();return;}
- $("token-layer4").replaceChildren(frag);stage4.animating=true;renderStage4ButtonsOnly();
+ replaceChildrenCompat($("token-layer4"),frag);stage4.animating=true;renderStage4ButtonsOnly();
  let start=null;
  function tick(now){
   if(!stage4.animating)return;
@@ -2397,58 +3213,87 @@ function applyStage4(){
  const code=$("p4-code-input").value;
  if(code!==stage4.code)markEdited4();
  if(code!==stage4.code)return;
- if(stage4.code.length>8000){$("p4-status").textContent="入力が文字数上限を超えています。";return;}
+ if(stage4.selectedDefinitionId==="SSSP"&&ssspStart(graph)===null){$("p4-status").textContent=SSSP_ERROR;return;}
+ if(ANSWER_MODE&&Object.prototype.hasOwnProperty.call(ANSWER_SCENARIOS,stage4.selectedDefinitionId)&&!recommendedInitialValues4(stage4.selectedDefinitionId,graph).matches){$("p4-status").textContent="この課題の初期value・グラフ種別が一致していません。①で課題の解答用グラフを選ぶか、条件に合わせて設定してください。";return;}
+  if(stage4.code.length>8200){$("p4-status").textContent="入力が文字数上限を超えています。";return;}
  syncUserDefinition4();saveWorkspace();
  stage4.frames=[];stage4.position=0;stage4.ready=false;
  $("p4-status").textContent="Computeを検証しています…";renderStage4();
  const token=++stage4.token;
- let worker;
- try{
-  const blob=new Blob([$("playground4-worker-source").textContent],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  try{worker=new Worker(url);}finally{URL.revokeObjectURL(url);}
- }catch(e){
-  $("p4-apply").disabled=false;
-  $("p4-status").textContent="Worker起動失敗："+e.message+"。ローカルHTMLで動作しない場合はHTTP配信でも確認してください。";
-  return;
+ const request={type:"run",token,body:stage4.code,graph:clone(stage4.graph),params:{...stage4.params}};
+ let worker=null,url=null,timeout=null,started=false,closed=false;
+ function dispose(){
+  if(closed)return;closed=true;
+  if(timeout!==null)clearTimeout(timeout);
+  if(worker)worker.terminate();
+  if(url!==null)URL.revokeObjectURL(url);
  }
- stage4.worker=worker;renderStage4();
- const timeout=setTimeout(()=>{
+ function fail(message){
   if(stage4.token!==token)return;
-  worker.terminate();stage4.worker=null;stage4.token++;
-  $("p4-status").textContent="3秒の処理時間上限を超えました。コードを確認してください。";renderStage4();
- },3000);
- worker.onmessage=event=>{
+  dispose();stage4.worker=null;stage4.frames=[];stage4.ready=false;stage4.position=0;
+  renderStage4();$("p4-status").textContent=message;
+ }
+ function finish(result,fallback=false){
   if(stage4.token!==token)return;
-  clearTimeout(timeout);worker.terminate();stage4.worker=null;$("p4-apply").disabled=false;
-  if(event.data.type==="error"||event.data.error||event.data.complete!==true||!event.data.frames?.length){
-   stage4.frames=[];stage4.ready=false;stage4.position=0;
-   $("p4-status").textContent=event.data.message||event.data.error||"実行履歴を確定できませんでした。";renderStage4();return;
+  dispose();stage4.worker=null;
+  if(!result||result.type==="error"||result.error||result.complete!==true||!result.frames||!result.frames.length){
+   fail(result&&(result.message||result.error)||"実行履歴を確定できませんでした。");return;
   }
-  stage4.frames=event.data.frames;stage4.ready=true;stage4.position=0;
-  renderStage4();$("p4-status").textContent="コードを確定しました。行送り、Superstep送り、自動実行で確認できます。";
+  stage4.frames=result.frames;stage4.ready=true;stage4.position=0;
+  renderStage4();$("p4-status").textContent="コードを確定しました。行送り、Superstep送り、自動実行で確認できます。"+(fallback?"（組み込み互換モード）":"");
   saveWorkspace();
+ }
+ function fallback(){
+  if(stage4.token!==token)return;
+  dispose();
+  // Exact precompiled built-ins only. Never run edited code on the UI thread.
+  try{
+   const result=window.takezonoBuiltinSimulation(request.body,request.graph,request.params);
+   if(result){finish(result,true);return;}
+  }catch(e){fail(e.message);return;}
+  fail("この環境ではユーザ定義Computeを実行するWorkerを利用できません。組み込みComputeを選ぶか、通常のブラウザで開いてください。");
+ }
+ try{
+  if(typeof Worker!=="function"||typeof Blob!=="function"||typeof URL==="undefined"||!URL.createObjectURL){fallback();return;}
+  url=URL.createObjectURL(new Blob([$("playground4-worker-source").textContent],{type:"text/javascript"}));
+  worker=new Worker(url);
+ }catch(e){fallback();return;}
+ stage4.worker={terminate:dispose};renderStage4();
+ timeout=setTimeout(fallback,8000);
+ worker.onmessage=event=>{
+  if(stage4.token!==token||closed)return;
+  const data=event.data;
+  if(data&&data.type==="ready"&&!started){
+   clearTimeout(timeout);started=true;
+   // Revoke only after the worker has loaded the blob.
+   if(url!==null){URL.revokeObjectURL(url);url=null;}
+   timeout=setTimeout(()=>fail("15秒の処理時間上限を超えました。コードを確認してください。"),15000);
+   try{worker.postMessage(request);}catch(e){fallback();}
+   return;
+  }
+  if(started&&data&&data.token===token)finish(data);
  };
  worker.onerror=event=>{
-  if(stage4.token!==token)return;
-  clearTimeout(timeout);worker.terminate();stage4.worker=null;$("p4-apply").disabled=false;
-  $("p4-status").textContent="Worker実行エラー："+(event.message||"環境の制限");renderStage4();
+  if(stage4.token!==token||closed)return;
+  if(!started)fallback();
+  else fail("Worker実行エラー："+(event.message||"環境の制限"));
  };
- worker.postMessage({type:"run",token,body:stage4.code,graph:clone(stage4.graph),
-  params:{...stage4.params}});
 }
+
 function validateWorkspace4(data){
- if(!data||![1,2,3,4].includes(data.schema)||!data.main||!data.playground)throw Error("対応していない保存形式です");
+ if(!data||![1,2,3,4,5,6].includes(data.schema)||!data.main||!data.playground)throw Error("対応していない保存形式です");
  validate(data.main.graph);
  if(data.schema<4&&data.main.start!==null&&!data.main.graph.vertices.includes(data.main.start))throw Error("始点が存在しません");
  if(data.schema>=4&&!Array.isArray(data.main.graph.values))throw Error("初期valueがありません");
  const p=data.playground;ensureStage4Graph(p.graph,p.mode);
- if(typeof p.code!=="string"||p.code.length>8000||typeof p.initializer!=="string"||p.initializer.length>1500)
+ if(typeof p.code!=="string"||p.code.length>8200||typeof p.initializer!=="string"||p.initializer.length>1500)
   throw Error("保存したComputeコードが不正です");
  if(data.schema>=2){
   if(!Array.isArray(data.userDefinitions)||data.userDefinitions.length>MAX_USER_DEFINITIONS)
    throw Error("ユーザComputeの件数が不正です");
   const defs=data.userDefinitions.map(verifiedUserDefinition4),ids=new Set(defs.map(d=>d.id));
+  if(data.schema<5)for(const d of defs)d.code=migrateLegacyCompute4(d.code);
+  if(data.schema<6)for(const d of defs)d.code=migrateCandidate4(d.code);
   if(ids.size!==defs.length)throw Error("ユーザCompute IDが重複しています");
   if(typeof p.selectedId!=="string"||
    !(isBuiltinDefinition4(p.selectedId)||p.selectedId.startsWith("user:")&&ids.has(p.selectedId.slice(5))))
@@ -2456,7 +3301,7 @@ function validateWorkspace4(data){
   if(data.schema>=3){
    const lib=data.graphLibrary;
    if(!lib||!Array.isArray(lib.users)||lib.users.length>MAX_USER_GRAPHS)throw Error("グラフ定義一覧が不正です");
-   if(data.schema>=4&&lib.users.some(d=>!Array.isArray(d?.graph?.values)))throw Error("ユーザグラフの初期valueがありません");
+   if(data.schema>=4&&lib.users.some(d=>!Array.isArray((d&&d.graph&&d.graph.values))))throw Error("ユーザグラフの初期valueがありません");
    const graphs=lib.users.map(verifiedUserGraph4),keys=new Set(graphs.map(d=>d.id));
    if(keys.size!==graphs.length)throw Error("グラフIDが重複しています");
    if(typeof lib.selectedId!=="string"||
@@ -2494,7 +3339,7 @@ function initializeStage4(saved){
     if(p.code===sc.compute&&p.initializer===sc.initializer)loadStage4Scenario(base,false);
     else{
      stage4.baseScenario=base;stage4.selectedDefinitionId=base;
-     stage4.code=p.code;stage4.initializer=p.initializer;stage4.params={...sc.params};
+     stage4.code=migrateCandidate4(migrateLegacyCompute4(p.code));stage4.initializer=p.initializer;stage4.params={...sc.params};
      createUserDefinition4();
      $("p4-code-input").value=stage4.code;
      $("p4-editor").hidden=false;$("p4-trace").hidden=true;
@@ -2514,9 +3359,9 @@ function initializeStage4(saved){
 }
 function zoomVisiblePage(){const stage=page<=2?page:page===4?3:page===5?4:null;if(stage!==null)updateGraphZoom(stage);}
 function setPage(n){
- if(![1,2,3,4,5].includes(n))return;
+ if(![1,2,3,4,5,6].includes(n))return;
  if(page===5&&n!==5)stopStage4();
- pause();page=n;
+ closeComputeHelp();pause();page=n;
  // As on ai.html, the learning footer belongs to the active page and sticks within it.
  $("page"+n).appendChild($("learning-footer"));
  for(const id of [1,2,3,4,5]){$("page"+id).hidden=id!==n;if(id===n)$("tab"+id).setAttribute("aria-current","step");else $("tab"+id).removeAttribute("aria-current");}
@@ -2625,7 +3470,8 @@ $("p4-code-input").addEventListener("scroll",()=>{
 $("p4-code-input").addEventListener("keydown",e=>{
  if(e.key!=="Tab")return;
  e.preventDefault();const area=e.target;
- area.setRangeText("  ",area.selectionStart,area.selectionEnd,"end");markEdited4();
+ if(typeof area.setRangeText==="function")area.setRangeText("  ",area.selectionStart,area.selectionEnd,"end");
+ else{const start=area.selectionStart,end=area.selectionEnd;area.value=area.value.slice(0,start)+"  "+area.value.slice(end);area.selectionStart=area.selectionEnd=start+2;}markEdited4();
 });
 $("p4-apply").addEventListener("click",applyStage4);
 $("p4-reset").addEventListener("click",()=>{stopStage4();jumpStage4(0,false);});
@@ -2636,7 +3482,7 @@ $("p4-prev-ss").addEventListener("click",()=>{stopStage4();previousStage4SS();})
 $("p4-next-ss").addEventListener("click",()=>{stopStage4();nextStage4SS();});
 $("p4-play").addEventListener("click",startStage4Auto);
 const saved=readWorkspace();
-if(saved&&[1,2,3,4].includes(saved.schema)&&saved.main){
+if(saved&&[1,2,3,4,5,6].includes(saved.schema)&&saved.main){
  try{
   validate(saved.main.graph);
   graph=clone(saved.main.graph);
