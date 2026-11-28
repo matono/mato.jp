@@ -121,6 +121,48 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .dfs-model-details summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--prime-color)}
 .dfs-model-details summary:focus-visible{outline:2px solid var(--prime-color);outline-offset:3px}
 .dfs-model-details .compute-note{margin-top:8px}
+#sequential-mode{display:block;width:100%;margin-top:5px}
+#sequential-pending-panel{margin-top:8px;border-top:1px solid #cbd5dc;padding-top:8px;min-width:0}
+#sequential-pending-title{font-size:13px;margin:0}
+#sequential-run-note{min-width:0;overflow-wrap:anywhere}
+#sequential-pending-track{--pending-card-width:56px;--pending-card-height:26px;--pending-card-gap:3px;--pending-list-inset:3px;position:relative;display:grid;grid-template-columns:var(--pending-card-width) auto minmax(0,1fr) auto;grid-template-areas:"processing-label . next-label ." "processing shift pending push";align-items:start;column-gap:5px;row-gap:3px;min-width:0;margin-top:5px}
+#sequential-pending-track.stack{grid-template-columns:minmax(0,1fr) auto var(--pending-card-width);grid-template-areas:"next-label . processing-label" "pending push processing"}
+#sequential-next-label,#sequential-processing-label{font-size:11px;font-weight:700;color:#155c86;line-height:1.2;white-space:nowrap;text-align:center}
+#sequential-next-label{grid-area:next-label;justify-self:start;width:var(--pending-card-width);margin-left:3px}
+#sequential-pending-track.stack #sequential-next-label{justify-self:end;margin-left:0;margin-right:3px}
+#sequential-processing-label{grid-area:processing-label}
+#sequential-pending{grid-area:pending;display:flex;min-width:0;align-items:flex-start;gap:var(--pending-card-gap);min-height:calc(var(--pending-card-height) + 2 * var(--pending-list-inset));overflow:hidden;border-block:1px solid #b8c6d0;padding:2px 3px}
+#sequential-pending-track.stack #sequential-pending{border-left:1px solid #b8c6d0}
+#sequential-pending-track.stack #sequential-pending>:first-child{margin-left:auto}
+.pending-item,#sequential-processing-value,.pending-empty,.pending-omitted{box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:var(--pending-card-width);height:var(--pending-card-height);border:1px solid #b8c6d0;border-radius:4px;padding:0 2px;font-size:12px;line-height:1.2;background:white;white-space:nowrap;color:#26333d}
+.pending-item.next{border-color:#155c86;background:#e8f1f6;font-weight:700}
+.pending-empty{color:var(--muted);border-color:transparent;background:transparent}
+.pending-omitted{color:var(--muted);border-style:dashed;background:transparent;font-size:11px;font-variant-numeric:tabular-nums}
+.pending-operation{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:var(--pending-card-height);margin-top:var(--pending-list-inset);color:#155c86;font-size:11px;line-height:1.2;white-space:nowrap}
+#sequential-shift{grid-area:shift}
+#sequential-push{grid-area:push}
+.pending-operation[hidden]{display:none!important}
+#sequential-processing-value{grid-area:processing;margin-top:var(--pending-list-inset);color:var(--muted);font-weight:700}
+#sequential-processing-value.active,.pending-transfer{background:#155c86;color:#fff;border-color:#155c86}
+.pending-transfer{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:1px solid #155c86;border-radius:4px;font-size:12px;font-weight:700;line-height:1.2;white-space:nowrap;z-index:3;pointer-events:none}
+/* On narrow Queue layouts, keep both endpoints visible by putting arrows below the list. */
+#sequential-pending-track.compact:not(.stack){grid-template-columns:var(--pending-card-width) minmax(0,1fr);grid-template-areas:"processing-label next-label" "processing pending" ". operations"}
+#sequential-pending-track.compact:not(.stack) #sequential-shift,#sequential-pending-track.compact:not(.stack) #sequential-push{grid-area:operations;height:auto;margin-top:0}
+#sequential-pending-track.compact:not(.stack) #sequential-shift{justify-self:start}
+#sequential-pending-track.compact:not(.stack) #sequential-push{justify-self:end}
+#sequential-pending-track.tiny:not(.stack){grid-template-areas:"processing-label ." "processing ." "next-label next-label" "pending pending" "operations operations"}
+@media(max-width:400px){#sequential-pending-track{column-gap:3px}}
+#page2.queue-mode .key-square{border-color:#b8c6d0}
+#page2.queue-mode .key-square.path,#page2.queue-mode .key-square.current,#page2.queue-mode .key-square.parent,#page2.queue-mode .key-square.pending{border-color:#155c86}
+#page2.queue-mode .key-square.done{border-color:#9bc2dc}
+#page2.queue-mode .edge-swatch{border-color:#b8c6d0}
+#page2.queue-mode .edge-swatch.active,#page2.queue-mode .edge-swatch.pending{border-color:#155c86}
+#page2.queue-mode .edge-swatch.seen{border-color:#9bc2dc}
+#page2 .run-key .key-square.parent{border:2px solid #155c86;background:#e8f1f6}
+#page2 .run-key .key-square.pending{border:2px dashed #155c86}
+#page2 .edge-swatch.pending{border-top:2px dashed #155c86}
+#page2.queue-mode #sequential-edge-swatch{border-top-width:2px}
+#sequential-pending-panel[hidden],#queue-legend-parent[hidden],#queue-legend-pending[hidden],#queue-legend-edge-pending[hidden]{display:none!important}
 .playground-challenge{margin-top:16px}
 .playground-challenge>p,.playground-challenge section>p{font-size:13px;line-height:1.65;margin:8px 0}
 .playground-challenge section{border-top:1px solid var(--line);padding:10px 0}
@@ -288,7 +330,10 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 .graph-vertex .node-initial-value{font-size:11px;font-weight:650}
 @media(max-width:590px){.vertex-values{grid-template-columns:repeat(2,minmax(0,1fr))}.execution-first-no-start{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .initial-value-mismatch{color:#995800;font-weight:650}
-.analysis-panel{margin-top:12px}
+.analysis-panel{margin-top:12px;min-width:0}
+@media(max-width:920px){
+ #page2 > .analysis-panel,#page4 > .analysis-panel,#page5 > .analysis-panel{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+}
 .analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
 @media(max-width:680px){.analysis-grid{grid-template-columns:minmax(0,1fr)}}
 .analysis-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums}
@@ -415,22 +460,23 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="page-description">
 <p><strong>逐次実行モデル</strong>では、1つの実行主体がグラフの頂点を順番にたどり、到達した頂点で処理を実行します。</p>
 <p>ここでは、<strong>どの順番で頂点をたどるか（探索方法）</strong>と、<strong>頂点で何をするか（Compute）</strong>を分けて考えましょう。</p>
-<p>探索には<strong>深さ優先探索（DFS）</strong>の順序を使います。迷路で右手を壁に沿わせながら進む「右手法」のように、1人の探索者が道を進み、行き止まりでは引き返して別の道を調べます。</p>
+<p id="sequential-intro">探索には<strong>深さ優先探索（DFS）</strong>の順序を使います。迷路で右手を壁に沿わせながら進む「右手法」のように、1人の探索者が道を進み、行き止まりでは引き返して別の道を調べます。</p>
 <p>今回は、開始頂点から各頂点までの<strong>最短距離（SSSP）</strong>を求めます。辺の長さはすべて1です。より短い経路が見つかったら、その頂点の距離を更新して探索を続けます。</p>
 </div></div>
 <div class="workspace run-workspace">
 <section class="graph-area" aria-label="逐次グラフ処理">
 <div class="section-heading"><h3>1人で順番に探索する</h3><div class="graph-title-controls"><span id="count2" class="muted"></span><div class="graph-zoom-controls" role="group" aria-label="グラフ2の表示倍率"><button type="button" id="zoom-fit2" aria-pressed="true">全体表示</button><button type="button" id="zoom-actual2" aria-pressed="false">100%</button><button type="button" id="zoom-out2" aria-label="縮小">−</button><output id="zoom-percent2">—</output><button type="button" id="zoom-in2" aria-label="拡大">＋</button></div></div></div>
 
-<div class="graph-stage run-graph-stage" id="graph-view2"><svg id="graph2" viewBox="0 0 700 700" role="img" aria-label="単一始点から出辺をたどるDFSの可視化">
+<div class="graph-stage run-graph-stage" id="graph-view2"><svg id="graph2" viewBox="0 0 700 700" role="img" aria-label="単一始点から出辺をたどる逐次探索の可視化">
 <defs><marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#aab7c0"/></marker>
+<marker id="arrow2-queue-unseen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#b8c6d0"/></marker>
 <marker id="arrow2-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker>
 <marker id="arrow2-seen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#9bc2dc"/></marker>
 </defs><g id="edge-layer2"></g><g id="vertex-layer2"></g><g id="token-layer2"></g></svg></div>
-<div class="run-key" aria-label="Cardの状態"><span><i class="key-square"></i>未処理（−1／∞）</span><span><i class="key-square path"></i>経路中</span><span><i class="key-square current"></i>現頂点（初／再／復）</span><span><i class="key-square done"></i>距離判明（更新あり）</span></div>
-<div class="run-key" aria-label="辺の状態"><span><i class="edge-swatch"></i>未確認</span><span><i class="edge-swatch active"></i>現在のパス</span><span><i class="edge-swatch seen"></i>確認済み</span></div>
-<p id="dfs-graph-guide" class="graph-guide">各頂点のinput（受信した距離候補）、value（保持する距離）、output（探索依頼）、candidate（更新候補）を確認しましょう。濃い青は現在の経路、薄い青は確認済みの辺です。</p>
-<div id="dfs-analysis" class="analysis-panel" aria-label="DFS実行の分析"></div>
+<div class="run-key" aria-label="Cardの状態"><span><i class="key-square"></i>未処理（−1／∞）</span><span><i class="key-square path"></i><span id="sequential-path-label">経路中</span></span><span><i class="key-square current"></i><span id="sequential-current-label">現頂点（初／再／復）</span></span><span><i class="key-square done"></i><span id="sequential-visited-label">距離判明（更新あり）</span></span><span id="queue-legend-parent" hidden><i class="key-square parent"></i>親頂点</span><span id="queue-legend-pending" hidden><i class="key-square pending"></i>現グループ・処理待ち（背景：白／薄青＝初／再）</span></div>
+<div class="run-key" aria-label="辺の状態"><span><i class="edge-swatch"></i>未確認</span><span><i class="edge-swatch active" id="sequential-edge-swatch"></i><span id="sequential-edge-label">現在のパス</span></span><span><i class="edge-swatch seen"></i>確認済み</span><span id="queue-legend-edge-pending" hidden><i class="edge-swatch pending"></i>現グループ・処理待ち</span></div>
+<p id="dfs-graph-guide" class="graph-guide">濃い青は現在の経路、薄い青は確認済みの辺です。</p>
+<div id="dfs-analysis" class="analysis-panel" aria-label="逐次実行の分析"></div>
 </section>
 <section class="operations dfs-operations" aria-labelledby="dfs-title">
 <div class="section-heading"><h3 id="dfs-title">逐次実行モデルの操作</h3><span id="step-label" class="muted"></span></div>
@@ -450,24 +496,31 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <div class="run-code" aria-label="各頂点で行うComputeの例"><h3>頂点での処理（Compute）</h3>
 <div id="dfs-code" class="compute-box code-read" aria-label="頂点で実行するComputeと現在の実行行"></div>
 </div>
-<div class="run-note" id="dfs-status" role="status" aria-live="polite"></div>
-<details class="dfs-model-details">
-<summary>DFS実行モデルのコードを見る</summary>
-<p class="compute-note">上のComputeを各頂点で呼び出す処理です。各頂点は <code>value</code>（①で指定した初期値）と <code>neighbors</code>（隣接頂点の配列）を持ち、<code>dfs(startVertex, null)</code> で開始します。アニメーション履歴を記録する部分は省略しています。outputには宛先と値を記録し、Computeの終了後に順番に探索します。</p>
-<pre class="dfs-model-source"><code>function dfs(vertex, input) {
-  const output = [];
+<div class="run-note" id="sequential-run-note">
+<div id="dfs-status" role="status" aria-live="polite"></div>
+<div id="sequential-pending-panel" hidden><h4 id="sequential-pending-title">探索待ち</h4><div id="sequential-pending-track"><span id="sequential-next-label">次の処理対象</span><span id="sequential-processing-label">処理中</span><div id="sequential-shift" class="pending-operation"><span>← shift</span></div><div id="sequential-pending" role="list" aria-label="探索待ち"></div><div id="sequential-push" class="pending-operation"><span>← push</span><span id="sequential-pop">pop →</span></div><span id="sequential-processing-value" aria-labelledby="sequential-processing-label">—</span></div></div>
+</div>
+<details class="dfs-model-details" id="sequential-details">
+<summary>発展：逐次実行モデルのコードと探索方法</summary>
+<p class="compute-note">頂点で実行するComputeは共通です。探索依頼を処理する順序を切り替えます。方式を変更すると②の実行を最初からやり直します。</p>
+<label for="sequential-mode" class="compute-note">実行方式</label>
+<select id="sequential-mode"><option value="recursive">DFS（再帰）</option><option value="stack">DFS（Stack）</option><option value="queue">BFS（Queue）</option></select>
+<p id="sequential-model-note" class="compute-note"></p>
+
+<pre class="dfs-model-source"><code id="sequential-model-source">function dfs(vertex, input) {
+  const outputs = [];
 
   compute(input, {
     getValue() { return vertex.value; },
     setValue(v) { vertex.value = v; },
     exploreNeighbors(v) {
       for (const to of vertex.neighbors) {
-        output.push({ to, value: v });
+        outputs.push({ to, value: v });
       }
     }
   });
 
-  for (const message of output) {
+  for (const message of outputs) {
     dfs(message.to, message.value);
   }
 }</code></pre>
@@ -565,7 +618,6 @@ button:focus-visible,select:focus-visible,a:focus-visible,.graph-vertex:focus-vi
 <marker id="arrow3-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 Z" fill="#155c86"/></marker></defs>
 <g id="edge-layer3"></g><g id="vertex-layer3"></g><g id="token-layer3"></g></svg></div>
 <div class="run-key" aria-label="Pregelの頂点状態"><span><i class="active-dot"></i>Active（活性）</span><span><i class="halted-dot"></i>Halted（停止）</span><span>太枠：現在のコード行を実行した頂点</span></div>
-<p class="graph-guide">各頂点のinputs（受信した距離候補）、value（保持する距離）、output（送信予約）、candidate（更新候補）を確認しましょう。「次の行」で1行ずつ進み、「次のSS」でSuperstepを進めます。</p>
 <div id="pregel-analysis" class="analysis-panel" aria-label="Pregel実行の分析"></div>
 </section>
 <section class="operations run-operations" aria-labelledby="pregel-title">
@@ -668,7 +720,6 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
     </svg>
    </div>
    <div class="run-key"><span><i class="active-dot"></i>Active</span><span><i class="halted-dot"></i>Halted</span><span>太枠：この文の実行頂点</span><span>青い円：メッセージ</span></div>
-   <p class="graph-guide">頂点には inputs / value / output と、更新候補のローカル変数 candidate を表示します。candidateはComputeごとに初期化され、値を代入するまでは「—」です。</p>
    <div id="p4-analysis" class="analysis-panel" aria-label="Playground実行の分析"></div>
   </section>
   <section class="operations run-operations" aria-labelledby="p4-title">
@@ -707,7 +758,6 @@ for (let ss = 0; ss &lt; MAX_SUPERSTEPS; ss++) {
      <div class="code-line"><span class="num" id="p4-editor-tail-num" aria-hidden="true">4</span><code>}</code></div>
     </div>
     <div id="p4-trace" class="compute-box code-read p4-trace" hidden aria-label="実行コードと行番号"></div>
-    <p class="compute-note">candidateは教材用の観測変数です。宣言は固定されており、本文では自由に代入できます。他のローカル変数も宣言できますが、カードには表示しません。行単位の同期は学習用で、実際のPregelの同期はSuperstep境界です。</p>
    </div>
    <p id="p4-status" class="run-note" role="status" aria-live="polite">サンプルを選んで「コードを確定」を押してください。</p>
 
@@ -1219,7 +1269,7 @@ function dfsFrames(g,start){
     exploreRequested=true;
     invocation.output=outgoing(g,v).map(to=>({to,value:next}));
     showInvocation();
-    save("expand"+tag,source?6:9,"Compute：隣接頂点へ距離候補"+next+"を渡すようDFS実行モデルに依頼します。",null,v);
+    save("expand"+tag,source?6:9,"Compute：隣接頂点へ距離候補"+next+"を渡すよう逐次実行モデルに依頼します。",null,v);
    }
   },(line,candidate)=>{
    invocation.candidate=candidate==null?null:candidate;showInvocation();
@@ -1254,6 +1304,90 @@ function dfsFrames(g,start){
  save("done",0,"SSSPの計算が終了しました。開始頂点"+start+"からの距離："+g.vertices.map(id=>
   id+"="+(Number.isFinite(local.get(id).value)?local.get(id).value:"∞")).join("、")+"。");
  return frames;
+}
+// Same Compute, LIFO/FIFO scheduling. Preserve the sender for edge animation.
+function pendingFrames(g,start,mode){
+ validate(g);if(ssspStart(g)!==start||start===null)throw Error(SSSP_ERROR);
+ if(mode!=="stack"&&mode!=="queue")throw Error("Invalid execution mode");
+ const local=new Map(g.vertices.map(id=>[id,{input:null,value:initialValue(g,id),output:[],candidate:null}]));
+ const checked=new Set(),order=[],pending=[{from:null,to:start,value:null,path:[start],group:null}],frames=[],name=mode==="stack"?"Stack":"Queue";
+ let route=[],request=null,processing=null,requestRevisit=false,groupSerial=0;
+ function snapshot(){return entriesObject([...local].map(([id,state])=>[id,{...state,output:state.output.map(m=>({...m}))}]));}
+ function save(type,line,note,move=null,current=null){
+  frames.push({type,line,stack:route.slice(),pending:pending.slice(),request,processing,requestRevisit,visited:order.slice(),nodeStates:snapshot(),current,move,inspected:[...checked],checked:checked.size,edgeTotal:g.edges.length,note});
+ }
+ save("initial",0,"実行モデル："+name+"に開始頂点"+start+"への探索依頼を登録しました。");
+ while(pending.length){
+  // Inspect the next request before the visual path switch; dequeue at the target transition.
+  const message=mode==="stack"?pending[pending.length-1]:pending[0],v=message.to,input=message.value;
+  if(mode==="stack"){
+   const parentPath=message.path.slice(0,-1);
+   let common=0;while(common<route.length&&common<parentPath.length&&route[common]===parentPath[common])common++;
+   while(route.length>common&&route.length>1){
+    const from=route.pop(),to=route[route.length-1];
+    processing=null;
+    save("route-return",0,"経路切替：頂点"+from+"から頂点"+to+"まで強調を戻します（Computeは実行しません）。",{from,to,kind:"route-return"},to);
+   }
+   route=message.path.slice();
+  }
+  if(mode==="stack")pending.pop();else pending.shift();
+  request=message;processing=message;requestRevisit=order.includes(v);
+  if(message.from!==null){
+   checked.add(message.from+":"+v);
+   save("descend",0,"実行モデル："+name+"から頂点"+v+"への探索依頼（距離候補"+input+"）を取り出しました。",{from:message.from,to:v,kind:"forward",value:input},v);
+  }
+  const node=local.get(v),previous=node.value,first=!order.includes(v),tag=first?"":"-revisit",source=previous===-1;
+  node.input=input;node.output=[];node.candidate=null;
+  if(first)order.push(v);
+  save("call"+tag,1,"実行モデル：頂点"+v+"のComputeを呼び出します。"+(input===null?"（受信データなし）":" 距離候補："+input),null,v);
+  dfsCompute(input,{
+   getValue(){return node.value;},
+   setValue(next){node.value=next;save("update"+tag,source?5:8,"Compute：頂点"+v+"の最短距離候補を"+next+"に更新しました。",null,v);},
+   exploreNeighbors(next){node.output=outgoing(g,v).map(to=>({to,value:next}));save("expand"+tag,source?6:9,"Compute：隣接頂点へ距離候補"+next+"を渡すよう実行モデルに依頼します。",null,v);}
+  },(line,candidate)=>{
+   node.candidate=candidate==null?null:candidate;
+   if(line===2)save("declare"+tag,line,"Compute：更新候補candidateを宣言します。",null,v);
+   else if(line===3)save("candidate"+tag,line,"Compute：受け取ったinputをcandidateに格納します。",null,v);
+   else if(line===4)save("condition"+tag,line,"Compute：開始頂点の初回処理かを判定します。",null,v);
+   else if(line===7)save("condition"+tag,line,"Compute：更新候補"+candidate+"が保存値"+(Number.isFinite(previous)?previous:"∞")+"より短いか判定します。",null,v);
+  });
+  // Reverse neighbor order for LIFO to match recursive DFS.
+  const group={id:++groupSerial,from:v,targets:node.output.map(m=>m.to)};
+  const next=node.output.map(m=>({from:v,to:m.to,value:m.value,path:mode==="stack"?message.path.concat(m.to):null,group}));
+  if(mode==="stack")next.reverse();
+  pending.push(...next);
+  // Keep the request visible while this vertex remains highlighted, including completion.
+  save("complete"+tag,0,"実行モデル：頂点"+v+"のComputeが終了しました。"+(next.length?name+"へ"+next.length+"件の探索依頼を追加しました。":"新しい探索依頼はありません。"),null,v);
+  if(mode==="queue"&&message.from!==null){
+   processing=null;
+   save("queue-return",0,"表示上の復帰：頂点"+v+"の処理が終了し、親頂点"+message.from+"へ戻ります（Computeやデータ送信は行いません）。",{from:v,to:message.from,kind:"queue-return"},message.from);
+  }
+ }
+ if(mode==="stack")while(route.length>1){
+   processing=null;
+  const from=route.pop(),to=route[route.length-1];
+  save("route-return",0,"経路切替：頂点"+from+"から頂点"+to+"まで強調を戻します（Computeは実行しません）。",{from,to,kind:"route-return"},to);
+ }
+ route=[];request=null;processing=null;
+ save("done",0,"SSSPの計算が終了しました。開始頂点"+start+"からの距離："+g.vertices.map(id=>id+"="+(Number.isFinite(local.get(id).value)?local.get(id).value:"∞")).join("、")+"。");
+ return frames;
+}
+// Group identity refers to one output, not global vertex/edge history.
+function queueNodeRole(f,id){
+ const m=f&&f.request,g=m&&m.group;
+ if(m&&(f.type==="queue-return"?f.current===id:m.to===id))return "current";
+ if(g&&g.from===id)return "parent";
+ if(g&&g.targets.includes(id))return (f.pending||[]).some(p=>p.group===g&&p.to===id)?"sibling-pending":"sibling-done";
+ return f&&f.visited.includes(id)?"visited":"unvisited";
+}
+function queueEdgeRole(f,a,b,undirected=false){
+ const m=f&&f.request,g=m&&m.group,matches=(from,to)=>a===from&&b===to||undirected&&a===to&&b===from;
+ if(m&&m.from!==null&&f.type!=="queue-return"&&matches(m.from,m.to))return "current";
+ if(g){
+  const to=g.targets.find(id=>matches(g.from,id));
+  if(to!==undefined)return (f.pending||[]).some(p=>p.group===g&&p.to===to)?"sibling-pending":"sibling-done";
+ }
+ return f&&(f.inspected.includes(a+":"+b)||undirected&&f.inspected.includes(b+":"+a))?"visited":"unvisited";
 }
 // Pregel SSSP: input is a collection of distance candidates received at this step.
 // Message delivery happens between Supersteps, not during Compute.
@@ -1365,6 +1499,7 @@ function bulkInitialValues(){
  if(!prepareGraphEdit4())return;
  graph.values=values;graphChanged();
 }
+let sequentialMode="recursive";
 let graph=clone(DEFAULT_GRAPH),selectedVertex=1,activeCycle=null,page=1,startVertex=1,frames=[],frameIndex=0,pregelHistory=[],pregelIndex=0,timer=null,isPlaying=false,motion=null;
 const graphZoom={1:{mode:"fit",scale:1},2:{mode:"fit",scale:1},3:{mode:"fit",scale:1},4:{mode:"fit",scale:1}};
 function graphFitScale(stage){
@@ -1483,13 +1618,14 @@ function svgText(parent,x,y,value,attrs={}){
 // Shared compact card geometry for both Pregel pages.
 function pregelCardValueText(value,maxWidth,measure){
  if(measure(value)<=maxWidth)return value;
- const chars=Array.from(value);
- let low=0,high=chars.length;
+ const array=value.startsWith("[")&&value.endsWith("]"),suffix=array?"…]":"…";
+ const chars=Array.from(array?value.slice(0,-1):value);
+ let low=array?1:0,high=chars.length;
  while(low<high){
   const mid=Math.ceil((low+high)/2);
-  if(measure(chars.slice(0,mid).join("")+"…")<=maxWidth)low=mid;else high=mid-1;
+  if(measure(chars.slice(0,mid).join("")+suffix)<=maxWidth)low=mid;else high=mid-1;
  }
- return chars.slice(0,low).join("")+"…";
+ return chars.slice(0,low).join("")+suffix;
 }
 let pregelCardMeasureContext;
 function measureCardText(value,fontSize=12,fontWeight=650){
@@ -1507,10 +1643,10 @@ function runEdgeStyle(hot,seen,marker){
  return {stroke:hot?"#155c86":seen?"#9bc2dc":"#aab7c0",
   "stroke-width":hot?3:seen?2.5:2,"stroke-linecap":"round","marker-end":marker};
 }
-function drawRunCardFrame(parent,bx,by,rect,id,{fill,stroke,focused=false,path=false,dark=false,status="",dot=null}){
+function drawRunCardFrame(parent,bx,by,rect,id,{fill,stroke,focused=false,path=false,dark=false,status="",dot=null,dashed=false,strokeWidth=null}){
  const d=RUN_CARD_GEOMETRY;
  parent.appendChild(element("rect",{x:bx,y:by,width:rect.width,height:rect.height,rx:d.radius,
-  fill,stroke,"stroke-width":focused?3:path?2.5:1.5}));
+  fill,stroke,"stroke-width":strokeWidth??(focused?3:path?2.5:1.5),...(dashed?{"stroke-dasharray":"6 4"}:{})}));
  svgText(parent,bx+10,by+d.headerY,"頂点 "+id,{class:"run-vertex-label"});
  if(status){
   const right=bx+rect.width-d.padding;
@@ -1520,7 +1656,7 @@ function drawRunCardFrame(parent,bx,by,rect,id,{fill,stroke,focused=false,path=f
  parent.appendChild(element("line",{x1:bx+d.padding,x2:bx+rect.width-d.padding,
   y1:by+d.dividerY,y2:by+d.dividerY,stroke:dark?"#9ac2dc":"#d2dae0","stroke-width":1}));
 }
-function formatRunOutput(output,format=distanceText){return output.length?output.map(m=>m.to+":"+format(m.value)).join(", "):"—";}
+function formatRunOutputs(outputs,format=distanceText){return "["+outputs.map(m=>m.to+":"+format(m.value)).join(", ")+"]";}
 function drawRunCardRows(parent,bx,by,rect,rows,before=null){
  const d=RUN_CARD_GEOMETRY;
  rows.forEach(([label,value],i)=>{
@@ -1542,14 +1678,17 @@ function drawRunMotionDot(from,label,attrs={}){
 }
 function currentAction(f){
  if(!f)return null;
+ if(f.type==="descend"&&f.pending)return f.requestRevisit?"revisit":"first";
  if(["call","declare","candidate","condition","update","expand","complete"].includes(f.type))return"first";
  if(["call-revisit","declare-revisit","candidate-revisit","condition-revisit","update-revisit","expand-revisit","complete-revisit","skip-revisit"].includes(f.type))return"revisit";
- if(f.type==="backtrack"||f.type==="check-return")return"return";
+ if(f.type==="backtrack"||f.type==="check-return"||f.type==="queue-return")return"return";
+ if(f.type==="route-return")return"route";
  return null;
 }
 function dfsNodeState(f,id){
  if(!f)return"unvisited";
  if(currentAction(f)&&f.current===id)return"current";
+ if(f.pending&&f.stack.includes(id))return"path";
  if(!f.visited.includes(id))return"unvisited";
  if(f.stack.includes(id))return"path";
  return"visited";
@@ -1578,7 +1717,7 @@ function drawExecution(stage){
  svg.setAttribute("viewBox","0 0 "+layout.width+" "+layout.height);
 
  $("count"+stage).textContent=graph.vertices.length+"頂点・"+(graphMode==="undirected"?pairs(graph).length+"無向辺":graph.edges.length+"有向辺");
- const edgeFrag=document.createDocumentFragment(),cardFrag=document.createDocumentFragment();
+ const edgeFrag=document.createDocumentFragment(),cardFrag=document.createDocumentFragment(),queueMode=stage===2&&sequentialMode==="queue";
  const inspected=new Set(stage===2?(f&&f.inspected)||[]:[]),pathEdges=new Set();
  if(stage===2&&f){
   for(let i=1;i<f.stack.length;i++)pathEdges.add(f.stack[i-1]+":"+f.stack[i]);
@@ -1592,6 +1731,13 @@ function drawExecution(stage){
   if(graphMode==="undirected"&&drawn.has(key))continue;
   drawn.add(key);
   const seg=runSegment(graph,graphMode,p,a,b,rect);
+  if(queueMode){
+   const role=queueEdgeRole(f,a,b,graphMode==="undirected"),current=role==="current",group=current||role.startsWith("sibling-"),seen=role==="visited",
+    color=group?"#155c86":seen?"#9bc2dc":"#b8c6d0",marker=graphMode==="undirected"?"none":"url(#"+(group?"arrow2-active":seen?"arrow2-seen":"arrow2-queue-unseen")+")";
+   const attrs={"data-edge":key,"data-state":role,stroke:color,"stroke-width":2,"stroke-linecap":"round"};
+   edgeFrag.appendChild(element("line",{x1:seg.from.x,y1:seg.from.y,x2:seg.to.x,y2:seg.to.y,...attrs,"marker-end":marker,...(role==="sibling-pending"?{"stroke-dasharray":"6 4"}:{})}));
+   continue;
+  }
   const hot=stage===2?(pathEdges.has(direct)||graphMode==="undirected"&&pathEdges.has(reverse)):
    highlightedEdges.has(direct)||graphMode==="undirected"&&highlightedEdges.has(reverse);
   const seen=stage===2&&(inspected.has(direct)||graphMode==="undirected"&&inspected.has(reverse));
@@ -1612,26 +1758,28 @@ function drawExecution(stage){
    drawRunCardFrame(grp,bx,by,rect,id,{fill:color,stroke:hot?"#155c86":node.active?"#9bb8ca":"#c4cdd3",focused:hot,
      status:node.active?"Active":"Halted",dot:node.active?"#155c86":"#aab7c0"});
     const input=node.input.length?"["+node.input.join(",")+"]":"[]";
-   const output=formatRunOutput(node.output);
-   const rows=[["inputs",input],["value",distanceText(node.value)],["output",output],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
+   const outputs=formatRunOutputs(node.output);
+   const rows=[["inputs",input],["value",distanceText(node.value)],["outputs",outputs],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
    const previous=pregelIndex>0?((pregelHistory[pregelIndex-1]||{}).states||[]).find(x=>x.id===id):null;
    const before=previous?[previous.input.length?"["+previous.input.join(",")+"]":"[]",
-    distanceText(previous.value),formatRunOutput(previous.output),previous.candidate==null?"—":distanceText(previous.candidate)]:null;
+    distanceText(previous.value),formatRunOutputs(previous.output),previous.candidate==null?"—":distanceText(previous.candidate)]:null;
    drawRunCardRows(grp,bx,by,rect,rows,before);
     const tooltip=element("title",{});tooltip.textContent="頂点 "+id+" / "+(node.active?"Active":"Halted")+
-    " / inputs: "+input+" / value: "+distanceText(node.value)+" / output: "+output+" / candidate: "+(node.candidate==null?"—":distanceText(node.candidate));
+    " / inputs: "+input+" / value: "+distanceText(node.value)+" / outputs: "+outputs+" / candidate: "+(node.candidate==null?"—":distanceText(node.candidate));
    grp.appendChild(tooltip);cardFrag.appendChild(grp);continue;
   }
   // DFS retains its own path and current-node semantics.
-  const node=(f&&f.nodeStates&&f.nodeStates[id])||{input:null,value:Infinity,output:[],candidate:null},state=dfsNodeState(f,id),
-   action=state==="current"?currentAction(f):null,paint=nodePaint(state);
+  const node=(f&&f.nodeStates&&f.nodeStates[id])||{input:null,value:Infinity,output:[],candidate:null},state=queueMode?queueNodeRole(f,id):dfsNodeState(f,id),
+   action=state==="current"?(queueMode?(f.type==="queue-return"?"return":f.requestRevisit?"revisit":"first"):currentAction(f)):null,
+   visited=f&&f.visited.includes(id),
+   paint=queueMode&&["parent","sibling-pending","sibling-done"].includes(state)?{fill:visited?"#e8f1f6":"#fff",stroke:"#155c86"}:nodePaint(state);
   const grp=element("g",{"data-node-id":id,"data-node-state":state,
     "data-node-action":action||"",role:"presentation",
     class:"run-card"+(state==="current"?" run-card-current":"")});
-  drawRunCardFrame(grp,bx,by,rect,id,{fill:paint.fill,stroke:paint.stroke,focused:state==="current",path:state==="path",dark:state==="current",
-    status:state==="current"?"現頂点（"+({first:"初",revisit:"再",return:"復"}[action])+"）":""});
+  drawRunCardFrame(grp,bx,by,rect,id,{fill:paint.fill,stroke:paint.stroke,focused:state==="current",path:state==="path"||state.startsWith("sibling-"),dark:state==="current",dashed:state==="sibling-pending",strokeWidth:queueMode&&["parent","current","sibling-pending","sibling-done"].includes(state)?2:null,
+    status:state==="current"?"現頂点（"+({first:"初",revisit:"再",return:"復",route:"切"}[action])+"）":state==="parent"?"親頂点":state==="sibling-pending"?(visited?"再訪問待ち":"初訪問待ち"):state==="sibling-done"?"処理済み":""});
    const rows=[["input",node.input==null?"—":distanceText(node.input)],["value",distanceText(node.value)],
-    ["output",formatRunOutput(node.output)],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
+    ["outputs",formatRunOutputs(node.output)],["candidate",node.candidate==null?"—":distanceText(node.candidate)]];
    drawRunCardRows(grp,bx,by,rect,rows);
    const tooltip=element("title",{});tooltip.textContent="頂点 "+id+" / "+rows.map(([key,value])=>key+": "+value).join(" / ");
    grp.appendChild(tooltip);
@@ -1695,6 +1843,7 @@ function pause(){
  isPlaying=false;
  if(motion!==null){
   const t=motion;motion=null;
+  if(t.cleanup)t.cleanup();
   if(t.rafId!==null&&typeof window.cancelAnimationFrame==="function")
    window.cancelAnimationFrame(t.rafId);
   replaceChildrenCompat($("token-layer"+t.stage));
@@ -1711,7 +1860,7 @@ function syncSSSPControls(){
 }
 function resetDFS(){
  pause();syncSSSPControls();
- frames=startVertex!==null?dfsFrames(graph,startVertex):[{type:"initial",line:0,stack:[],visited:[],current:null,move:null,nodeStates:entriesObject(graph.vertices.map(id=>[id,{input:null,value:initialValue(graph,id),output:[],candidate:null}])),inspected:[],checked:0,edgeTotal:graph.edges.length,note:SSSP_ERROR}];
+ frames=startVertex!==null?(sequentialMode==="recursive"?dfsFrames(graph,startVertex):pendingFrames(graph,startVertex,sequentialMode)):[{type:"initial",line:0,stack:[],visited:[],current:null,move:null,nodeStates:entriesObject(graph.vertices.map(id=>[id,{input:null,value:initialValue(graph,id),output:[],candidate:null}])),inspected:[],checked:0,edgeTotal:graph.edges.length,note:SSSP_ERROR}];
  frameIndex=0;renderDFS();
 }
 function resetPregel(){
@@ -1722,7 +1871,7 @@ function resetPregel(){
 // Vertex navigation follows the walk itself: a Compute completion or a
 // backtrack to the parent is one stop. A backtrack does not invoke Compute.
 function isDFSVertexStop(frame){
- return frame.type==="complete"||frame.type==="complete-revisit"||frame.type==="backtrack";
+ return frame.type==="complete"||frame.type==="complete-revisit"||frame.type==="backtrack"||frame.type==="route-return"||frame.type==="queue-return";
 }
 function nextDFSVertexIndex(afterIndex){
  return frames.findIndex((frame,index)=>index>afterIndex&&isDFSVertexStop(frame));
@@ -1740,6 +1889,7 @@ function nextDFSVertex(){
  pause();
  const target=nextDFSVertexIndex(frameIndex);
  if(target<0)return;
+ if(sequentialMode!=="recursive"){animatePendingSequence(target);return;}
  // A vertex jump skips Compute lines, but must still show the edge traversal
  // leading to the next Compute completion or the backtrack stop.
  const travel=frames.findIndex((frame,index)=>index>frameIndex&&index<=target&&frame.move!==null);
@@ -1747,7 +1897,7 @@ function nextDFSVertex(){
   const plan=travelPlan(2,travel);
   if(plan.length){
    frameIndex=travel-1;renderDFS();
-   animateTravel(2,target,plan);return;
+   animateTravel(2,target,plan,travel);return;
   }
  }
  moveTo(2,target);
@@ -1802,6 +1952,7 @@ const PREGEL_CODE=[
 ];
 const COMPUTE_HELP={
  "2": [
+  {id:"compute",title:"compute",description:"各頂点で実行する処理を定義する関数です。逐次実行モデルは探索順序に従って1つの頂点ずつComputeを呼び出します。DFSとBFSで探索順序は異なりますが、このComputeは共通です。",parts:[[1,"compute"]]},
   {
    "id": "input",
    "title": "input",
@@ -1816,7 +1967,7 @@ const COMPUTE_HELP={
   {
    "id": "api",
    "title": "api",
-   "description": "DFS実行モデルが提供する機能群です。頂点が保持する値の取得・更新や、隣接頂点へのデータ送信を依頼する機能が含まれます。",
+   "description": "逐次実行モデルが提供する機能群です。頂点が保持する値の取得・更新や、隣接頂点へのデータ送信を依頼する機能が含まれます。",
    "parts": [
     [
      1,
@@ -1827,7 +1978,7 @@ const COMPUTE_HELP={
   {
    "id": "candidate",
    "title": "candidate",
-   "description": "頂点が保持する値の更新候補を格納するローカル変数です。Computeを呼び出すたびに宣言され、値を代入するまでは「—」と表示されます。",
+   "description": "更新候補などの途中計算の値を頂点カードに表示するための教材用ローカル変数です。Computeを呼び出すたびに初期化され、値を代入するまでは「—」と表示します。",
    "parts": [
     [
      2,
@@ -1904,7 +2055,7 @@ const COMPUTE_HELP={
   {
    "id": "continue",
    "title": "探索の継続",
-   "description": "この頂点が保持する距離に辺の長さ1を加えた距離（候補）を、隣接頂点に渡すようDFSに依頼します。距離は8行目で更新されています。",
+   "description": "この頂点が保持する距離に辺の長さ1を加えた距離（候補）を、隣接頂点に渡すよう逐次実行モデルに依頼します。距離は8行目で更新されています。",
    "parts": [
     [
      9,
@@ -1914,6 +2065,7 @@ const COMPUTE_HELP={
   }
  ],
  "3": [
+  {id:"compute",title:"compute",description:"各頂点で実行する処理を定義する関数です。Pregelでは各SuperstepでActiveな頂点がそれぞれComputeを実行します。頂点間の同期はSuperstepの境界で行われ、送信したメッセージは次のSuperstepで届きます。この教材では理解しやすくするため、各頂点の処理を行単位で同期して表示します。",parts:[[1,"compute"]]},
   {
    "id": "inputs",
    "title": "inputs",
@@ -1939,7 +2091,7 @@ const COMPUTE_HELP={
   {
    "id": "candidate",
    "title": "candidate",
-   "description": "頂点が保持する値の更新候補を格納するローカル変数です。Computeを呼び出すたびに宣言され、値を代入するまでは「—」と表示されます。",
+   "description": "更新候補などの途中計算の値を頂点カードに表示するための教材用ローカル変数です。Pregel固有の変数ではありません。Computeを呼び出すたびに初期化され、値を代入するまでは「—」と表示します。",
    "parts": [
     [
      2,
@@ -2037,6 +2189,13 @@ const COMPUTE_HELP={
   }
  ]
 };
+// Reuse fixed header help for the Playground's editable Compute.
+COMPUTE_HELP[4]=COMPUTE_HELP[3].filter(group=>["compute","inputs","api","candidate"].includes(group.id)).map(group=>{
+ if(group.id==="inputs")return {...group,description:"前のSuperstepで送られたメッセージの配列です。SS0ではinputsは空です。配列メッセージも1件の要素として受け取ります。"};
+ if(group.id==="api")return {...group,description:"Pregel実行モデルが提供する機能群です。頂点の値の取得・更新、メッセージの送信予約、Haltedへの移行などに使います。利用できるAPIの一覧は実行モデルの説明にあります。"};
+ if(group.id==="candidate")return {...group,description:"更新候補などの途中計算の値を頂点カードに表示するための教材用ローカル変数です。Pregel固有の変数ではありません。Computeを呼び出すたびに初期化され、値を代入するまでは「—」と表示します。 宣言は固定されています。本文ではcandidate = ...; と自由に代入できます。他のローカル変数も宣言できますが、頂点カードには表示されません。"};
+ return group;
+});
 function computeHelpRanges(stage,source){
  const rows=source.map(()=>[]);
  for(const group of COMPUTE_HELP[stage]){
@@ -2104,6 +2263,19 @@ function appendComputeHelpToken(code,holder,group,term){
  });
  code.appendChild(token);
 }
+function appendComputeHelpLine(cell,holder,str,ranges){
+ let cursor=0;
+ for(const range of ranges){
+  cell.appendChild(document.createTextNode(str.slice(cursor,range.from)));
+  appendComputeHelpToken(cell,holder,range.group,str.slice(range.from,range.to));cursor=range.to;
+ }
+ cell.appendChild(document.createTextNode(str.slice(cursor)||(!str?" ":"")));
+}
+function initializePlaygroundComputeHelp(){
+ const holder=$("p4-editor"),cells=Array.from(holder.querySelectorAll(".code-line code")).slice(0,2),source=cells.map(cell=>cell.textContent);
+ const ranges=computeHelpRanges(4,source);
+ cells.forEach((cell,i)=>{replaceChildrenCompat(cell);appendComputeHelpLine(cell,holder,source[i],ranges[i]);});
+}
 function dismissComputeHelpOutside(e){if(computeHelpOpen&&!e.target.closest(".code-help-token,.code-help-popup"))closeComputeHelp();}
 if("PointerEvent" in window)document.addEventListener("pointerdown",dismissComputeHelpOutside);
 else{document.addEventListener("mousedown",dismissComputeHelpOutside);document.addEventListener("touchstart",dismissComputeHelpOutside,{passive:true});}
@@ -2121,12 +2293,7 @@ function renderCodeTrace(stage,activeLine){
   source.forEach((str,i)=>{
    const line=document.createElement("div");line.className="code-line";
    const num=document.createElement("span");num.className="num";num.setAttribute("aria-hidden","true");num.textContent=String(i+1);
-   const code=document.createElement("code");let cursor=0;
-   for(const range of ranges[i]){
-    code.appendChild(document.createTextNode(str.slice(cursor,range.from)));
-    appendComputeHelpToken(code,holder,range.group,str.slice(range.from,range.to));cursor=range.to;
-   }
-   code.appendChild(document.createTextNode(str.slice(cursor)||(!str?" ":"")));
+   const code=document.createElement("code");appendComputeHelpLine(code,holder,str,ranges[i]);
    line.append(num,code);frag.appendChild(line);
   });
   replaceChildrenCompat(holder,frag);holder.dataset.helpReady="true";
@@ -2203,11 +2370,124 @@ function parallelAnalysis(history,index,playground=false){
   active:f&&f.phase!=="invalid"?(f.states.filter(n=>n.active).map(n=>n.id).join("、")||"なし"):null,
   steps,computes,received,sent:previousSent+output};
 }
+const SEQUENTIAL_RECURSIVE_CODE="function dfs(vertex, input) {\n  const outputs = [];\n\n  compute(input, {\n    getValue() { return vertex.value; },\n    setValue(v) { vertex.value = v; },\n    exploreNeighbors(v) {\n      for (const to of vertex.neighbors) {\n        outputs.push({ to, value: v });\n      }\n    }\n  });\n\n  for (const message of outputs) {\n    dfs(message.to, message.value);\n  }\n}";
+const SEQUENTIAL_PENDING_CODE=mode=>[
+ "function "+(mode==="stack"?"dfs":"bfs")+"(startVertex) {",
+ "  const "+mode+" = [{ to: startVertex, value: null }];",
+ "",
+ "  while ("+mode+".length > 0) {",
+ "    const message = "+mode+"."+(mode==="stack"?"pop":"shift")+"();",
+ "    const vertex = message.to;",
+ "    const outputs = [];",
+ "",
+ "    compute(message.value, {",
+ "      getValue() { return vertex.value; },",
+ "      setValue(v) { vertex.value = v; },",
+ "      exploreNeighbors(v) {",
+ "        for (const to of vertex.neighbors) {",
+ "          outputs.push({ to, value: v });",
+ "        }",
+ "      }",
+ "    });",
+ "",
+ "    "+mode+".push(...outputs"+(mode==="stack"?".reverse()":"")+");",
+ "  }",
+ "}"
+].join("\n");
+function pendingLabel(m){return (m.from===null?"開始":m.from)+" → "+m.to;}
+function renderSequentialProcessing(request){
+ const slot=$("sequential-processing-value");
+ slot.textContent=request?pendingLabel(request):"—";
+ slot.classList.toggle("active",Boolean(request));
+}
+// Compute display indices only: the full pending array remains the scheduler's source of truth.
+function pendingDisplayPlan(count,capacity,stack){
+ capacity=Math.max(1,Math.floor(capacity));
+ if(count<=capacity)return Array.from({length:count},(_,index)=>({index}));
+ if(stack){
+  const keep=Math.max(1,capacity-1);
+  if(capacity===1)return [{index:count-1,hidden:count-1}];
+  return [{omitted:count-keep},...Array.from({length:keep},(_,i)=>({index:count-keep+i}))];
+ }
+ if(capacity<3){
+  if(capacity===1)return [{index:0,hidden:count-1}];
+  return [{index:0,hidden:count-2},{index:count-1}];
+ }
+ const head=Math.ceil((capacity-1)/2),tail=capacity-1-head;
+ return [...Array.from({length:head},(_,index)=>({index})),{omitted:count-head-tail},...Array.from({length:tail},(_,i)=>({index:count-tail+i}))];
+}
+function pendingDisplayCapacity(list){
+ const css=window.getComputedStyle(list),width=parseFloat(css.getPropertyValue("--pending-card-width"))||56,gap=parseFloat(css.columnGap)||3;
+ const available=list.clientWidth-(parseFloat(css.paddingLeft)||0)-(parseFloat(css.paddingRight)||0);
+ return Math.max(1,Math.floor((available+gap+0.01)/(width+gap)));
+}
+function renderSequentialPending(f){
+ const stack=sequentialMode==="stack",items=f.pending||[],nextIndex=stack?items.length-1:0,list=$("sequential-pending"),track=$("sequential-pending-track");
+ track.classList.toggle("stack",stack);
+ $("sequential-shift").hidden=stack;$("sequential-pop").hidden=!stack;
+ const compact=!stack&&track.clientWidth>0&&track.clientWidth<340;
+ track.classList.toggle("compact",compact);
+ track.classList.remove("tiny");
+ let capacity=pendingDisplayCapacity(list);
+ if(!stack&&items.length>capacity&&capacity<3&&track.clientWidth>0){
+  track.classList.add("compact");
+  capacity=pendingDisplayCapacity(list);
+  if(capacity<3){track.classList.add("tiny");capacity=pendingDisplayCapacity(list);}
+ }
+ const plan=pendingDisplayPlan(items.length,capacity,stack),hidden=plan.reduce((sum,entry)=>sum+(entry.hidden||0),0);
+ $("sequential-pending-title").textContent=(stack?"Stack":"Queue")+"：探索待ち "+items.length+"件"+(hidden?"（"+hidden+"件省略）":"");
+ renderSequentialProcessing(f.processing);
+ const frag=document.createDocumentFragment();
+ for(const entry of plan){
+  const chip=document.createElement("span");
+  chip.setAttribute("role","listitem");
+  if(entry.omitted){
+   chip.className="pending-omitted";chip.textContent="…"+entry.omitted+"件";
+   chip.setAttribute("aria-label",entry.omitted+"件の探索依頼を省略");
+  }else{
+   const m=items[entry.index],next=entry.index===nextIndex;
+   chip.className="pending-item"+(next?" next":"");
+   chip.dataset.pendingIndex=String(entry.index);chip.textContent=pendingLabel(m);
+   if(next)chip.setAttribute("aria-describedby","sequential-next-label");
+  }
+  frag.appendChild(chip);
+ }
+ if(!items.length){const empty=document.createElement("span");empty.className="pending-empty";empty.textContent="空";frag.appendChild(empty);}
+ replaceChildrenCompat(list,frag);
+}
+function refreshSequentialPendingLayout(){
+ if(page===2&&sequentialMode!=="recursive"&&!motion&&frames[frameIndex])renderSequentialPending(frames[frameIndex]);
+}
+function renderSequentialModel(f){
+ const recursive=sequentialMode==="recursive",stack=sequentialMode==="stack",name=stack?"Stack":"Queue";
+ $("sequential-mode").value=sequentialMode;
+ const intro=recursive?"探索には<strong>深さ優先探索（DFS）</strong>の順序を使います。迷路で右手を壁に沿わせながら進む「右手法」のように、1人の探索者が道を進み、行き止まりでは引き返して別の道を調べます。":stack?
+  "探索には<strong>深さ優先探索（DFS）</strong>の順序を使います。探索依頼をStackに蓄え、最後に追加した依頼から処理します。":
+  "探索には<strong>幅優先探索（BFS）</strong>の順序を使います。探索依頼をQueueに蓄え、最初に追加した依頼から処理します。";
+ if($("sequential-intro").innerHTML!==intro)$("sequential-intro").innerHTML=intro;
+ $("page2").classList.toggle("queue-mode",!recursive&&!stack);
+ $("sequential-path-label").textContent=recursive||stack?"経路中":"現グループ・処理済み";
+ $("sequential-current-label").textContent=recursive?"現頂点（初／再／復）":stack?"現頂点（初／再／切）":"現頂点（初／再／復）";
+ $("sequential-edge-label").textContent=recursive||stack?"現在のパス":"現グループ・現在／処理済み";
+ $("sequential-visited-label").textContent=recursive||stack?"距離判明（更新あり）":"訪問済み";
+ for(const id of ["queue-legend-parent","queue-legend-pending","queue-legend-edge-pending"])$(id).hidden=recursive||stack;
+ $("sequential-model-note").textContent=recursive?
+  "再帰呼び出し：Computeの終了後、outputsの宛先を順に呼び出します。探索後は呼び出し元へ戻ります。各頂点はvalueとneighborsを持ち、dfs(startVertex, null)で開始します。アニメーションの記録は省略しています。":
+  (stack?"Stack（後入れ先出し）：pop()で末尾から取り出します。outputsを逆順に追加して再帰DFSと同じCompute順序にします。":"Queue（先入れ先出し）：shift()で先頭から取り出し、outputsをそのまま末尾に追加します。")+" 各頂点はvalueとneighborsを持ちます。アニメーションの記録は省略しています。";
+ const code=recursive?SEQUENTIAL_RECURSIVE_CODE:SEQUENTIAL_PENDING_CODE(sequentialMode);
+ if($("sequential-model-source").textContent!==code)$("sequential-model-source").textContent=code;
+ $("sequential-pending-panel").hidden=recursive;
+ if(!recursive){
+  renderSequentialPending(f);
+ }
+ if(page===2)$("footer-lesson").textContent=(recursive?"DFS（再帰）":stack?"DFS（Stack）":"BFS（Queue）")+"が探索順序を決め、Computeが距離を更新して、必要に応じて隣接頂点の探索を要求します。";
+}
 function renderDFS(animate=false){
  const f=frames[frameIndex];if(!f)return;
+ renderSequentialModel(f);
  $("dfs-status").textContent=f.note;
  renderAnalysis("dfs-analysis",dfsAnalysis(frames,frameIndex,graph.vertices.length));
- $("dfs-graph-guide").textContent="各頂点のinput（受信した距離候補）、value（保持する距離）、output（探索依頼）、candidate（更新候補）を確認しましょう。outputの宛先へ順番に値を渡します。濃い青は現在の経路、薄い青は確認済みの辺です。";
+ $("dfs-graph-guide").textContent=(sequentialMode==="recursive"?"outputsの宛先へ順番に値を渡します。濃い青は現在の経路、薄い青は確認済みの辺です。":sequentialMode==="stack"?"濃い青は現在の探索経路、薄い青は確認済みの辺です。「切」は探索経路の切替（実際の再帰復帰ではない）です。":"濃い青は現在の親と探索グループ、薄い青は訪問・確認済み、灰色は未訪問・未確認です。親頂点は実線とラベルで示し、探索グループが切り替わると強調が移ります。現グループの現在／処理済みの辺は実線、処理待ちは破線です。「復」は表示上の復帰であり、データを送信するわけではありません。背景は頂点の訪問状態を示します。");
  renderCodeTrace(2,f.line||0);
  playback(2,animate);
 }
@@ -2221,6 +2501,132 @@ function renderPregel(animate=false){
 // The visible transition is explicit: prior graph -> traveling messages -> new state.
 // requestAnimationFrame updates SVG coordinates, not CSS animation properties.
 const TRAVEL_DURATION_MS=500,TRAVEL_HOLD_MS=600;
+const PENDING_DURATION_MS=260,PARENT_DURATION_MS=360;
+function pendingDelta(before,after){
+ const old=before.pending||[],next=after.pending||[],oldSet=new Set(old),nextSet=new Set(next);
+ return {old,next,removed:old.filter(m=>!nextSet.has(m)),added:next.filter(m=>!oldSet.has(m))};
+}
+function parentGroupChanged(before,after){
+ const old=before.request&&before.request.group,next=after.request&&after.request.group;
+ return !!next&&old!==next;
+}
+function pendingStepNeeded(before,after){
+ const d=pendingDelta(before,after);
+ return d.removed.length>0||d.added.length>0||!!after.move||
+  sequentialMode==="queue"&&parentGroupChanged(before,after);
+}
+// Vertex jumps retain all animated transitions while skipping intermediate Compute lines.
+function animatePendingSequence(target){
+ const origin=frameIndex,indices=[];
+ for(let i=origin+1;i<=target;i++)if(pendingStepNeeded(frames[i-1],frames[i]))indices.push(i);
+ if(!indices.length||typeof window.requestAnimationFrame!=="function"){
+  commitFrame(2,target);if(isPlaying){if(target>=frames.length-1){isPlaying=false;playback(2);}else scheduleAuto(2);}return;
+ }
+ const t={stage:2,target,rafId:null};motion=t;
+ let cursor=0;
+ function tween(duration,draw,next){
+  let start=null;
+  function tick(now){
+   if(motion!==t)return;
+   if(start===null)start=now;
+   const p=Math.min(1,(now-start)/duration);
+   draw(p);
+   if(p<1)t.rafId=window.requestAnimationFrame(tick);
+   else {t.rafId=null;next();}
+  }
+  t.rafId=window.requestAnimationFrame(tick);
+ }
+ function finish(){
+  if(motion!==t)return;
+  motion=null;commitFrame(2,target);
+  if(isPlaying){if(target>=frames.length-1){isPlaying=false;playback(2);}else scheduleAuto(2);}
+ }
+ function step(){
+  if(motion!==t)return;
+  if(cursor>=indices.length){finish();return;}
+  const i=indices[cursor++],before=frames[i-1],after=frames[i],d=pendingDelta(before,after),stack=sequentialMode==="stack";
+  frameIndex=i-1;renderDFS();
+  const list=$("sequential-pending"),oldChips=Array.from(list.querySelectorAll(".pending-item"));
+  const oldPositions=new Map(oldChips.map(chip=>[d.old[Number(chip.dataset.pendingIndex)],chip.getBoundingClientRect().left]));
+  const leaving=oldChips.filter(chip=>d.removed.includes(d.old[Number(chip.dataset.pendingIndex)]));
+  function updatePending(){
+   if(!d.removed.length&&!d.added.length){travel();return;}
+   const changes=[],groupChange=!stack&&parentGroupChanged(before,after);
+   if(d.removed.length){
+    // The card arrives in its slot and the target becomes current in the same render.
+    // For Queue, preserve the old group as a temporary crossfade layer.
+    const pairs=[["edge-layer2","data-edge","data-state"],["vertex-layer2","data-node-id","data-node-state"]];
+    const previous=groupChange?pairs.map(([id,key,role])=>new Map(Array.from($(id).children).map(el=>[el.getAttribute(key),{role:el.getAttribute(role),clone:el.cloneNode(true)}]))):null;
+    frameIndex=i;renderDFS();
+    if(previous)pairs.forEach(([id,key,role],j)=>{
+     const layer=$(id);
+     for(const el of Array.from(layer.children)){
+      const old=previous[j].get(el.getAttribute(key));
+      if(!old||old.role===el.getAttribute(role))continue;
+      // The current vertex must change at once with the processing slot.
+      if(j===1&&(old.role==="current"||el.getAttribute(role)==="current"))continue;
+      const ghost=old.clone;ghost.setAttribute("aria-hidden","true");ghost.setAttribute("pointer-events","none");ghost.removeAttribute(key);
+      layer.insertBefore(ghost,el);el.setAttribute("opacity","0");changes.push({ghost,el});
+     }
+    });
+   }else renderSequentialPending(after);
+   const chips=Array.from(list.querySelectorAll(".pending-item"));
+   const moving=chips.map(chip=>{
+    const m=d.next[Number(chip.dataset.pendingIndex)],added=d.added.includes(m),revealed=!added&&!oldPositions.has(m),x=chip.getBoundingClientRect().left;
+    return {chip,added,revealed,dx:added?Math.max(24,list.getBoundingClientRect().right-x):((oldPositions.get(m)??x)-x)};
+   });
+   const reveal=()=>{
+    for(const m of moving){m.chip.style.transform="";m.chip.style.opacity="";}
+    for(const {ghost,el} of changes){ghost.remove();el.removeAttribute("opacity");}
+    travel();
+   };
+   if(!changes.length&&!moving.some(m=>m.added||m.revealed||Math.abs(m.dx)>1)){reveal();return;}
+   const duration=changes.length?Math.max(PARENT_DURATION_MS,PENDING_DURATION_MS):PENDING_DURATION_MS;
+   const draw=p=>{
+    const eased=1-Math.pow(1-Math.min(1,p*duration/PENDING_DURATION_MS),2),fade=Math.min(1,p*duration/PARENT_DURATION_MS);
+    for(const m of moving){m.chip.style.transform="translateX("+m.dx*(1-eased)+"px)";if(m.added||m.revealed)m.chip.style.opacity=String(eased);}
+    for(const {ghost,el} of changes){ghost.setAttribute("opacity",String(1-fade));el.setAttribute("opacity",String(fade));}
+   };
+   draw(0);tween(duration,draw,reveal);
+  }
+  function travel(){
+   const plan=travelPlan(2,i);
+   if(!plan.length){commitFrame(2,i);step();return;}
+   const layout=cardLayout(2),fragment=document.createDocumentFragment(),items=[];
+   for(const msg of plan){
+    const seg=runSegment(graph,graphMode,layout.p,msg.edgeFrom,msg.edgeTo,layout.rect);
+    const from=msg.reverse?seg.to:seg.from,to=msg.reverse?seg.from:seg.to,key=msg.edgeFrom+":"+msg.edgeTo;
+    const trail=element("line",{x1:from.x,y1:from.y,x2:from.x,y2:from.y,class:"motion-trail","data-motion-trail":key});
+    const dot=drawRunMotionDot(from,msg.label,{"data-motion-edge":key,"data-motion-direction":msg.reverse?"return":"forward"});
+    fragment.appendChild(trail);fragment.appendChild(dot);items.push({from,to,trail,dot});
+   }
+   replaceChildrenCompat($("token-layer2"),fragment);
+   tween(TRAVEL_DURATION_MS,p=>{
+    for(const m of items){const x=m.from.x+(m.to.x-m.from.x)*p,y=m.from.y+(m.to.y-m.from.y)*p;m.trail.setAttribute("x2",x);m.trail.setAttribute("y2",y);m.dot.setAttribute("transform","translate("+x+" "+y+")");}
+   },()=>{commitFrame(2,i);step();});
+  }
+  if(leaving.length&&after.processing){
+   // The overlay is outside the clipped list, so it can reach the slot.
+   const track=$("sequential-pending-track"),slot=$("sequential-processing-value"),chip=leaving[0];
+   const area=track.getBoundingClientRect(),from=chip.getBoundingClientRect(),to=slot.getBoundingClientRect();
+   const ghost=document.createElement("span");ghost.className="pending-transfer";ghost.setAttribute("aria-hidden","true");ghost.textContent=pendingLabel(after.processing);
+   track.appendChild(ghost);chip.style.visibility="hidden";
+   const cleanup=()=>{ghost.remove();chip.style.visibility="";t.cleanup=null;};
+   t.cleanup=cleanup;
+   const draw=p=>{
+    const q=p*p*(3-2*p);
+    ghost.style.left=(from.left-area.left+(to.left-from.left)*q)+"px";
+    ghost.style.top=(from.top-area.top+(to.top-from.top)*q)+"px";
+    ghost.style.width=(from.width+(to.width-from.width)*q)+"px";
+    ghost.style.height=(from.height+(to.height-from.height)*q)+"px";
+   };
+   draw(0);
+   tween(PENDING_DURATION_MS,draw,()=>{cleanup();updatePending();});
+  }else updatePending();
+ }
+ step();
+}
+
 function travelPlan(stage,target){
  if(stage===3){
   const next=pregelHistory[target];
@@ -2230,9 +2636,9 @@ function travelPlan(stage,target){
  }
  const m=(frames[target]&&frames[target].move);
  if(!m)return [];
- const reverse=m.kind==="return"||m.kind==="check-return";
+ const reverse=m.kind==="return"||m.kind==="check-return"||m.kind==="route-return"||m.kind==="queue-return";
  return [{edgeFrom:reverse?m.to:m.from,edgeTo:reverse?m.from:m.to,
-  reverse,label:reverse?"復":String(m.value)}];
+  reverse,label:reverse?(m.kind==="route-return"?"切":"復"):String(m.value)}];
 }
 function commitFrame(stage,target){
  if(stage===2){frameIndex=target;renderDFS();}
@@ -2247,12 +2653,13 @@ function scheduleAuto(stage,delay=TRAVEL_HOLD_MS){
   moveTo(stage,index+1);
  },delay);
 }
-function animateTravel(stage,target,plan){
+function animateTravel(stage,target,plan,travelIndex=target){
  if(typeof window.requestAnimationFrame!=="function"){
   commitFrame(stage,target);if(isPlaying)scheduleAuto(stage);return;
  }
- // Keep prior node states visible; all message markers start at the source.
- playback(stage,false);
+ // Display dequeued request and its group during delivery, before Compute.
+ if(stage===2&&sequentialMode==="queue"&&frames[travelIndex].type==="descend"){frameIndex=travelIndex;renderDFS();}
+ else playback(stage,false);
  const travelLayout=cardLayout(stage),positions=travelLayout.p,fragment=document.createDocumentFragment(),items=[];
  for(const msg of plan){
   const seg=runSegment(graph,graphMode,positions,msg.edgeFrom,msg.edgeTo,travelLayout.rect);
@@ -2300,6 +2707,7 @@ function moveTo(stage,target){
  const hist=stage===2?frames:pregelHistory,current=stage===2?frameIndex:pregelIndex;
  target=Math.max(0,Math.min(hist.length-1,target));
  if(target===current)return;
+ if(stage===2&&sequentialMode!=="recursive"&&target===current+1){animatePendingSequence(target);return;}
  const plan=target===current+1?travelPlan(stage,target):[];
  if(plan.length){animateTravel(stage,target,plan);return;}
  commitFrame(stage,target);
@@ -3048,11 +3456,11 @@ function drawStage4(){
     status:n.active?"Active":"Halted",dot:n.active?"#155c86":"#aab7c0"});
    const values=[
    ["inputs",formatValue4(n.input)],["value",formatValue4(n.value)],
-   ["output",formatRunOutput(n.output,formatValue4)],
+   ["outputs",formatRunOutputs(n.output,formatValue4)],
    ["candidate",formatValue4(n.candidate)]];
   const prev=stage4.position>0?stage4.frames[stage4.position-1].states.find(x=>x.id===id):null;
   const before=prev?[
-   formatValue4(prev.input),formatValue4(prev.value),formatRunOutput(prev.output,formatValue4),
+   formatValue4(prev.input),formatValue4(prev.value),formatRunOutputs(prev.output,formatValue4),
    formatValue4(prev.candidate)]:null;
   drawRunCardRows(g,bx,by,rect,values,before);
    const title=element("title",{});title.textContent="頂点 "+id+" / "+(n.active?"Active":"Halted")+" / "+values.map(([key,value])=>key+": "+value).join(" / ");g.appendChild(title);nodes.appendChild(g);
@@ -3102,18 +3510,24 @@ function renderStage4(){
  $("p4-editor").hidden=stage4.ready;
  $("p4-code-input").disabled=Boolean(stage4.worker);
  $("p4-trace").hidden=!stage4.ready;
+ if(computeHelpOpen&&computeHelpOpen.holder.hidden)closeComputeHelp();
  if(f&&stage4.ready){
-  const code=["function compute(inputs, api) {","  let candidate;",...stage4.code.split("\n"),"}"];
-  const line=playgroundCodeLine(f);
-  const frag=document.createDocumentFragment();
-  code.forEach((value,i)=>{
-   const row=document.createElement("div");row.className="code-line"+(i>=2&&i<code.length-1?" body-line":"")+(line===i+1?" hot":"");
-   const num=document.createElement("span");num.className="num";num.textContent=String(i+1);
-   const cell=document.createElement("code");cell.textContent=value||" ";
-   row.append(num,cell);frag.appendChild(row);
-  });
-  replaceChildrenCompat($("p4-trace"),frag);
- }
+   const code=["function compute(inputs, api) {","  let candidate;",...stage4.code.split("\n"),"}"];
+   const line=playgroundCodeLine(f),holder=$("p4-trace"),sourceKey=stage4.code;
+   if(!holder.dataset.helpReady||holder.dataset.source!==sourceKey){
+    if(computeHelpOpen&&computeHelpOpen.holder===holder)closeComputeHelp();
+    const frag=document.createDocumentFragment(),ranges=computeHelpRanges(4,code);
+    code.forEach((value,i)=>{
+     const row=document.createElement("div");row.className="code-line"+(i>=2&&i<code.length-1?" body-line":"");
+     const num=document.createElement("span");num.className="num";num.textContent=String(i+1);num.setAttribute("aria-hidden","true");
+     const cell=document.createElement("code");appendComputeHelpLine(cell,holder,value,ranges[i]);
+     row.append(num,cell);frag.appendChild(row);
+    });
+    replaceChildrenCompat(holder,frag);holder.dataset.helpReady="true";holder.dataset.source=sourceKey;
+   }
+   Array.from(holder.children).forEach((row,i)=>{const hot=line===i+1;row.classList.toggle("hot",hot);if(hot)row.setAttribute("aria-current","step");else row.removeAttribute("aria-current");});
+   positionComputeHelp();
+  }
  drawStage4();
 }
 function renderConfirmButton4(){
@@ -3357,6 +3771,23 @@ function initializeStage4(saved){
   "Compute "+stage4.userDefinitions.length+" 件・グラフ "+graphLibrary.users.length+" 件をこのブラウザに自動保存します。":
   "この環境では自動保存できません。変更内容は再アクセス時に復元されません。";
 }
+// Follow the same breakpoint as the single-column run workspace.
+// Move the original analysis node (never copy or reset its statistics).
+const narrowRunLayout=window.matchMedia?window.matchMedia("(max-width: 920px)"):null;
+function syncRunAnalysisLayout(narrow){
+ const footer=$("learning-footer");
+ for(const pair of [[2,"dfs-analysis"],[4,"pregel-analysis"],[5,"p4-analysis"]]){
+  const pageEl=$("page"+pair[0]),panel=$(pair[1]),target=narrow?pageEl:pageEl.querySelector(".run-workspace .graph-area");
+  if(panel.parentNode===target)continue;
+  // Page 5 also has a separate advanced challenge after the workspace.
+  // On narrow screens, all advanced content precedes the analysis.
+  if(narrow&&footer.parentNode===pageEl)target.insertBefore(panel,footer);
+  else target.appendChild(panel);
+ }
+}
+function syncResponsiveRunLayout(){
+ syncRunAnalysisLayout(narrowRunLayout?narrowRunLayout.matches:window.innerWidth<=920);
+}
 function zoomVisiblePage(){const stage=page<=2?page:page===4?3:page===5?4:null;if(stage!==null)updateGraphZoom(stage);}
 function setPage(n){
  if(![1,2,3,4,5,6].includes(n))return;
@@ -3434,6 +3865,7 @@ $("tab3").addEventListener("click",()=>setPage(3));
 $("tab4").addEventListener("click",()=>setPage(4));
 $("tab5").addEventListener("click",()=>setPage(5));
 $("footer-next").addEventListener("click",()=>{if(page<5)setPage(page+1);});
+$("sequential-mode").addEventListener("change",function(){if(!["recursive","stack","queue"].includes(this.value)||this.value===sequentialMode)return;pause();closeComputeHelp();sequentialMode=this.value;resetDFS();});
 $("dfs-reset").addEventListener("click",resetDFS);
 $("dfs-finish").addEventListener("click",()=>changeFrame(2,frames.length));
 $("dfs-prev").addEventListener("click",()=>changeFrame(2,-1));
@@ -3454,7 +3886,16 @@ for(const stage of [1,2,3,4]){
  $("zoom-out"+stage).addEventListener("click",()=>setGraphZoom(stage,"out"));
  $("zoom-in"+stage).addEventListener("click",()=>setGraphZoom(stage,"in"));
 }
-window.addEventListener("resize",zoomVisiblePage);
+window.addEventListener("resize",function(){syncResponsiveRunLayout();zoomVisiblePage();refreshSequentialPendingLayout();});
+if(typeof ResizeObserver==="function"){
+ let previousPendingWidth=-1;
+ const pendingObserver=new ResizeObserver(()=>{
+  const width=$("sequential-pending-track").clientWidth;
+  if(width===previousPendingWidth)return;
+  previousPendingWidth=width;refreshSequentialPendingLayout();
+ });
+ pendingObserver.observe($("sequential-pending-track"));
+}
 // Playground: editable sample code, graph topology, file import/export, and stepping.
 $("p4-scenario").addEventListener("change",function(){
  if(isBuiltinDefinition4(this.value))loadStage4Scenario(this.value);
@@ -3489,8 +3930,9 @@ if(saved&&[1,2,3,4,5,6].includes(saved.schema)&&saved.main){
   if(graph.vertices.includes(saved.main.start))startVertex=saved.main.start;
  }catch(e){graph=clone(DEFAULT_GRAPH);startVertex=1;}
 }
+initializePlaygroundComputeHelp();
 initializeStage4(saved);
-graphChanged();setPage(1);
+syncResponsiveRunLayout();graphChanged();setPage(1);
 })();
 </script>
 <script>
